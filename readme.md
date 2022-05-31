@@ -61,7 +61,7 @@ Pred zmazaním zamestnanca sa aplikácia spýta, ci ma zamestnanca archivovať. 
 -   Dátum zmazania (prepustenia) zamestnanca.
 -   Vo štvrtom stĺpci bude tlačidlo pre trvale zmazanie zamestnanca zo systému. Trvalému zmazaniu zamestnanca musí predchádzať potvrdenie akcie používateľom (aplikácia sa spýta, ci skutočne trvalo zmazať zamestnanca).
 
-**Zamestnanci a pozície musia byt evidovaní na serveri. Dáta budú uložene v SQL databáze ľubovoľného typu. Môžeme predpokladať, zem vždy bude existovať len jeden klient.**
+**Zamestnanci a pozície musia byt evidovaní na serveri. Dáta budú uložene v SQL databáze ľubovoľného typu. Môžeme predpokladať, že vždy bude existovať len jeden klient.**
 
 ## Technológie
 
@@ -101,6 +101,8 @@ Na čo dbať
     -   https://www.syncfusion.com/ebooks/ASPNET_Web_API_Succinctly
 -   Entity Framework
     -   https://docs.microsoft.com/en-us/ef/
+-   C# Async programming
+    -   https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/async/
 
 **Frontend**
 
@@ -113,5 +115,7 @@ Na čo dbať
     -   https://vuejs.org/guide/introduction.html
 -   Typescript
     -   https://www.syncfusion.com/ebooks/typescript
+-   Async/Promises
+    -   https://nodejs.dev/learn/javascript-asynchronous-programming-and-callbacks
 -   Bootstrap
     -   https://www.syncfusion.com/ebooks/twitterbootstrap4-succinctly
