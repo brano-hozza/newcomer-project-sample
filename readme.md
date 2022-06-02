@@ -4,6 +4,8 @@
     -   https://dotnet.microsoft.com/en-us/download/dotnet
 -   node 16
     -   https://nodejs.org/en/
+-   VS Code
+    -   https://code.visualstudio.com/
 
 # Zadanie
 
