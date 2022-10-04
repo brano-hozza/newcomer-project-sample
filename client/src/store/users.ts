@@ -12,9 +12,13 @@ export const useUsersStore = defineStore("users", {
      */
     async fetchUsers() {
       this.loading = true;
-      const response = await fetch("http://localhost:3000/users");
-      this.users = await response.json();
-      this.loading = false;
+      try {
+        const response = await fetch("http://localhost:3030/users");
+        this.users = await response.json();
+      } catch (e) {
+        this.users = [];
+      }
+      setTimeout(() => (this.loading = false), 5000);
     },
   },
 });
