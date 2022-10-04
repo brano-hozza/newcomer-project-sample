@@ -12,10 +12,11 @@ export default defineComponent({
   },
   computed: {},
   methods: {
-    goTo(path: string) {
-      this.$router.push(path);
-    },
-    isCurrentPath(path: string) {
+    /**
+     * Method to check if a route is active
+     * @param path - The path to the route
+     */
+    isActiveRoute(path: string) {
       return this.$route.path === path;
     },
   },
@@ -31,8 +32,8 @@ export default defineComponent({
             v-for="route in routes"
             :key="route.path"
             class="mx-2 border-2 border-neutral-600 px-2"
-            :class="{ 'border-red-500': isCurrentPath(route.path) }"
-            @click="goTo(route.path)"
+            :class="{ 'border-red-500': isActiveRoute(route.path) }"
+            @click="$router.push(route.path)"
           >
             {{ route.name }}
           </li>
