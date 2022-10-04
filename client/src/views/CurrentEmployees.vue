@@ -1,4 +1,4 @@
 <script setup lang="ts"></script>
 <template>
-  <h1>Current employees</h1>
+  <h1 class="text-xl">Current employees</h1>
 </template>
