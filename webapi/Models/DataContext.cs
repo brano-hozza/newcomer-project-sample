@@ -8,6 +8,7 @@ public class DataContext : DbContext
             : base(options)
     {
     }
+    public DbSet<Position> Positions { get; set; } = null!;
 
     public DbSet<User> Users { get; set; } = null!;
 }
