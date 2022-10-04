@@ -5,3 +5,4 @@ dist
 # webapi
 bin
 obj
+webapi/appsettings.*.json
