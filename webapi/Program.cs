@@ -1,27 +1,37 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using Grace.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-var builder = WebApplication.CreateBuilder(args);
+using WebApi.Host;
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace WebApi.API
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    public static class Program
+    {
+        public static void Main(string[] args)
+        {
+            HostHelper.BuildAndRun(BuildConfiguration, CreateHostBuilder, args);
+        }
+        private static Result<IConfigurationRoot> BuildConfiguration() =>
+                Result<IConfigurationRoot>.Ok(
+                    new ConfigurationBuilder()
+                        .AddAppSettingsJSON()
+                        .Build());
+
+        private static IHostBuilder CreateHostBuilder(IConfigurationRoot configuration, string[] args) =>
+            Microsoft.Extensions.Hosting.Host
+                .CreateDefaultBuilder(args)
+                .ConfigureHostConfiguration(builder => builder.AddConfiguration(configuration))
+                .ConfigureAppConfiguration(builder => builder.AddConfiguration(configuration))
+                .UseGrace()
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder
+                        .UseKestrel(options => options.AddServerHeader = false)
+                        .UseIISIntegration()
+                        .UseStartup<Startup>();
+                });
+    }
 }
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
