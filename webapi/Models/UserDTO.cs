@@ -10,5 +10,6 @@ namespace WebApi.Models
         public string StartDate { get; set; } = "";
         public float Salary { get; set; }
         public int Position { get; set; }
+        public bool Resigned { get; set; }
     }
 }

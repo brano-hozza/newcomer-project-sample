@@ -1,6 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 namespace WebApi.Models
 {
     public class User
@@ -24,7 +25,12 @@ namespace WebApi.Models
         [Required]
         public float Salary { get; set; }
 
+        public bool Resigned { get; set; }
         // References
         public virtual Position Position { get; set; } = null!;
+
+        [InverseProperty("User")]
+        public List<PositionChange> PositionChanges { get; set; } = null!;
+
     }
 }

@@ -13,5 +13,8 @@ namespace WebApi.Models
 
         [InverseProperty("Position")]
         public List<User> Users { get; set; } = null!;
+
+        [InverseProperty("Position")]
+        public List<PositionChange> PositionChanges { get; set; } = null!;
     }
 }
