@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -13,10 +13,12 @@ namespace WebApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly DataContext db;
+        private readonly IMapper mapper;
 
-        public UsersController(DataContext context)
+        public UsersController(DataContext _db, IMapper _mapper)
         {
-            db = context;
+            db = _db;
+            mapper = _mapper;
         }
 
         // GET: api/Users
@@ -27,17 +29,7 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-            return await db.Users.Select(user => new UserDTO
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Surname = user.Surname,
-                Address = user.Address,
-                BirthDate = user.BirthDate,
-                StartDate = user.StartDate,
-                Salary = user.Salary,
-                Position = user.Position.Id
-            }).ToArrayAsync();
+            return await db.Users.Include(u => u.Position).Select(user => mapper.Map<UserDTO>(user)).ToArrayAsync();
         }
 
         // GET: api/Users/5
@@ -53,17 +45,7 @@ namespace WebApi.Controllers
             UserDTO dto = null!;
             if (user != null)
             {
-                dto = new UserDTO
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Surname = user.Surname,
-                    Address = user.Address,
-                    BirthDate = user.BirthDate,
-                    StartDate = user.StartDate,
-                    Salary = user.Salary,
-                    Position = user.Position.Id
-                };
+                dto = mapper.Map<UserDTO>(user);
             }
 
             return dto ?? (ActionResult<UserDTO>)NotFound();
@@ -96,32 +78,23 @@ namespace WebApi.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(UserDTO user)
+        public async Task<ActionResult<User>> PostUser(UserDTO dto)
         {
             if (db.Users == null)
             {
                 return Problem("Entity set 'DataContext.Users'  is null.");
             }
-            var position = await db.Positions.FindAsync(user.Position);
+            var position = await db.Positions.FindAsync(dto.Position);
             if (position == null)
             {
                 return Problem("Position not found.");
             }
-            User newUser = new()
-            {
-                Name = user.Name,
-                Position = position,
-                Surname = user.Surname,
-                Address = user.Address ?? "",
-                Salary = user.Salary,
-                BirthDate = user.BirthDate,
-                StartDate = user.StartDate
-            };
-            db.Users.Add(newUser);
+            User user = mapper.Map<User>(dto);
+            db.Users.Add(user);
             await db.SaveChangesAsync();
-            user.Id = newUser.Id;
+            dto.Id = user.Id;
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return CreatedAtAction("GetUser", new { id = dto.Id }, dto);
         }
 
         // DELETE: api/Users/5

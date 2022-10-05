@@ -7,11 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Logging;
 using Grace.AspNetCore.MVC;
 using Grace.DependencyInjection;
 using WebApi.Models;
-using WebApi.API;
+using AutoMapper;
 
 namespace WebApi.API
 {
@@ -32,6 +31,12 @@ namespace WebApi.API
             services.AddControllers(options => options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer())))
             .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new ClientSettingsJsonConverterFactory()))
             .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.CreateMap<User, UserDTO>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.Position.Id));
+                cfg.CreateMap<Position, PositionDTO>();
+            });
 
             services.AddCors(options => options.AddPolicy(name: "AllowLocalhost", policy => policy.WithOrigins("http://localhost:3000")));
 

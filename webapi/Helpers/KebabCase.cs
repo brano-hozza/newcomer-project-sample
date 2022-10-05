@@ -6,7 +6,7 @@ namespace WebApi.API
 {
     public class KebabCaseParameterTransformer : IOutboundParameterTransformer
     {
-        public string? TransformOutbound(object value)
+        public string? TransformOutbound(object? value)
         {
             if (value == null)
             {
