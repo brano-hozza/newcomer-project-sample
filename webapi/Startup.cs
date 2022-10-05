@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Logging;
 using Grace.AspNetCore.MVC;
 using Grace.DependencyInjection;
 using WebApi.Models;
+using WebApi.API;
 
 namespace WebApi.API
 {
@@ -28,7 +29,11 @@ namespace WebApi.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(options => options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer())))
+            .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new ClientSettingsJsonConverterFactory()))
+            .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddCors(options => options.AddPolicy(name: "AllowLocalhost", policy => policy.WithOrigins("http://localhost:3000")));
 
             var connectionString = Configuration.GetConnectionString("WebApiDatabase");
             services.AddTransient<IDbConnection>(_ =>
@@ -47,6 +52,7 @@ namespace WebApi.API
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseCors("AllowLocalhost");
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
 

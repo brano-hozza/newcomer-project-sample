@@ -22,26 +22,52 @@ namespace WebApi.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
             if (_context.Users == null)
             {
                 return NotFound();
             }
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Select(user => new UserDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Surname = user.Surname,
+                Address = user.Address,
+                BirthDate = user.BirthDate,
+                StartDate = user.StartDate,
+                Salary = user.Salary,
+                Position = user.Position.Id
+            }).ToArrayAsync();
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<UserDTO>> GetUser(int id)
         {
             if (_context.Users == null)
             {
                 return NotFound();
             }
-            var user = await _context.Users.FindAsync(id);
+            //Include positions with user
+            var user = await _context.Users.Include(u => u.Position).Where(u => u.Id == id).FirstOrDefaultAsync();
+            UserDTO dto = null!;
+            if (user != null)
+            {
+                dto = new UserDTO
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    Address = user.Address,
+                    BirthDate = user.BirthDate,
+                    StartDate = user.StartDate,
+                    Salary = user.Salary,
+                    Position = user.Position.Id
+                };
+            }
 
-            return user ?? (ActionResult<User>)NotFound();
+            return dto ?? (ActionResult<UserDTO>)NotFound();
         }
 
         // PUT: api/Users/5
@@ -71,14 +97,30 @@ namespace WebApi.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(UserDTO user)
         {
             if (_context.Users == null)
             {
                 return Problem("Entity set 'DataContext.Users'  is null.");
             }
-            _context.Users.Add(user);
+            var position = await _context.Positions.FindAsync(user.Position);
+            if (position == null)
+            {
+                return Problem("Position not found.");
+            }
+            User newUser = new User
+            {
+                Name = user.Name,
+                Position = position,
+                Surname = user.Surname,
+                Address = user.Address ?? "",
+                Salary = user.Salary,
+                BirthDate = user.BirthDate,
+                StartDate = user.StartDate
+            };
+            _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
+            user.Id = newUser.Id;
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }

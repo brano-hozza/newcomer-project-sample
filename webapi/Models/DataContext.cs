@@ -11,4 +11,13 @@ public class DataContext : DbContext
     public DbSet<Position> Positions { get; set; } = null!;
 
     public DbSet<User> Users { get; set; } = null!;
+    #region Required
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>()
+        .HasOne(u => u.Position)
+        .WithMany(b => b.Users)
+        .OnDelete(DeleteBehavior.Cascade);
+    }
+    #endregion
 }

@@ -4,14 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace WebApi.Models
 {
-    public class Position
+    public class PositionDTO
     {
         public int Id { get; set; }
-
-        [Required]
         public string Name { get; set; } = "";
-
-        [InverseProperty("Position")]
-        public List<User> Users { get; set; } = null!;
     }
 }
