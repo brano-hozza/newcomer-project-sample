@@ -27,7 +27,20 @@ export default defineComponent({
     </div>
   </div>
   <div v-else>
-    {{ positions }}
+    <table class="table mx-2">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="position in positions" :key="position.id">
+          <th scope="row">{{ position.id }}</th>
+          <td>{{ position.name }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 <style lang="scss">

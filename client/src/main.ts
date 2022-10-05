@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "./routes";
 import { createPinia } from "pinia";
 import "bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/index.scss";
 createApp(App)
   .use(createPinia())
