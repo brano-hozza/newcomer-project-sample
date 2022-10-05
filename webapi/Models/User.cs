@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
+using System;
 namespace WebApi.Models
 {
     public class User
@@ -14,13 +15,13 @@ namespace WebApi.Models
         [Required]
         public string Surname { get; set; } = "";
 
-        public string Address { get; set; } = null!;
+        public string? Address { get; set; }
 
         [Required]
-        public string BirthDate { get; set; } = "";
+        public DateTime BirthDate { get; set; }
 
         [Required]
-        public string StartDate { get; set; } = "";
+        public DateTime StartDate { get; set; }
 
         [Required]
         public float Salary { get; set; }
@@ -30,7 +31,7 @@ namespace WebApi.Models
         public virtual Position Position { get; set; } = null!;
 
         [InverseProperty("User")]
-        public List<PositionChange> PositionChanges { get; set; } = null!;
+        public virtual List<PositionChange> PositionChanges { get; set; } = new List<PositionChange>();
 
     }
 }

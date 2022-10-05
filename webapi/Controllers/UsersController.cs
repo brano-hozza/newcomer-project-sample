@@ -15,10 +15,16 @@ namespace WebApi.Controllers
         private readonly DataContext db;
         private readonly IMapper mapper;
 
-        public UsersController(DataContext _db, IMapper _mapper)
+        public UsersController(DataContext _db)
         {
             db = _db;
-            mapper = _mapper;
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<User, UserDTO>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.Position.Id));
+                cfg.CreateMap<UserDTO, User>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => db.Positions.FirstOrDefault(p => p.Id == src.Position)));
+                cfg.CreateMap<Position, PositionDTO>();
+            });
+            mapper = new Mapper(config);
         }
 
         // GET: api/Users
@@ -54,14 +60,36 @@ namespace WebApi.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutUser(int id, UserDTO dto)
         {
-            if (id != user.Id)
+            User? user = await db.Users.Include(u => u.Position).FirstOrDefaultAsync();
+            Position? position = await db.Positions.FindAsync(dto.Position);
+
+            if (user == null || position == null)
             {
                 return BadRequest();
             }
 
+            if (user.Position.Id != dto.Position)
+            {
+                PositionChange? change = db.PositionChanges.Where(pc => pc.User.Id == user.Id).OrderByDescending(pc => pc.StartDate).FirstOrDefault();
+                if (change == null)
+                {
+                    return BadRequest();
+                }
+                change.EndDate = System.DateTime.Now;
+                db.Entry(change).State = EntityState.Modified;
+                PositionChange newChange = new()
+                {
+                    StartDate = System.DateTime.Now,
+                    User = user,
+                    Position = position
+                };
+                db.PositionChanges.Add(newChange);
+            }
+
             db.Entry(user).State = EntityState.Modified;
+            user = mapper.Map(dto, user);
 
             try
             {
@@ -91,10 +119,10 @@ namespace WebApi.Controllers
             }
             User user = mapper.Map<User>(dto);
             db.Users.Add(user);
+            db.PositionChanges.Add(new() { Position = position, User = user, StartDate = System.DateTime.Now });
             await db.SaveChangesAsync();
-            dto.Id = user.Id;
 
-            return CreatedAtAction("GetUser", new { id = dto.Id }, dto);
+            return CreatedAtAction("GetUser", new { id = user.Id }, dto);
         }
 
         // DELETE: api/Users/5

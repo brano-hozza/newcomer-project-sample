@@ -1,6 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace WebApi.Models
 {
@@ -9,9 +9,8 @@ namespace WebApi.Models
         public int Id { get; set; }
 
         [Required]
-        public string StartDate { get; set; } = "";
-        [Required]
-        public string EndDate { get; set; } = "";
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         [Required]
         [Key, ForeignKey("FK_User")]
         public virtual User User { get; set; } = null!;

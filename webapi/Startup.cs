@@ -1,6 +1,5 @@
 using System.Data;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -29,14 +28,9 @@ namespace WebApi.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers(options => options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer())))
-            .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new ClientSettingsJsonConverterFactory()))
+            .AddNewtonsoftJson(options => options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc)
             .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            services.AddAutoMapper(cfg =>
-            {
-                cfg.CreateMap<User, UserDTO>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.Position.Id));
-                cfg.CreateMap<Position, PositionDTO>();
-            });
 
             services.AddCors(options => options.AddPolicy(name: "AllowLocalhost", policy => policy.WithOrigins("http://localhost:3000")));
 

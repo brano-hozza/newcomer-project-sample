@@ -24,10 +24,10 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
         {
-          if (_context.Positions == null)
-          {
-              return NotFound();
-          }
+            if (_context.Positions == null)
+            {
+                return NotFound();
+            }
             return await _context.Positions.ToListAsync();
         }
 
@@ -35,18 +35,13 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Position>> GetPosition(int id)
         {
-          if (_context.Positions == null)
-          {
-              return NotFound();
-          }
-            var position = await _context.Positions.FindAsync(id);
-
-            if (position == null)
+            if (_context.Positions == null)
             {
                 return NotFound();
             }
+            var position = await _context.Positions.FindAsync(id);
 
-            return position;
+            return position ?? (ActionResult<Position>)NotFound();
         }
 
         // PUT: api/Positions/5
@@ -65,16 +60,9 @@ namespace WebApi.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException) when (!PositionExists(id))
             {
-                if (!PositionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -85,10 +73,10 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Position>> PostPosition(Position position)
         {
-          if (_context.Positions == null)
-          {
-              return Problem("Entity set 'DataContext.Positions'  is null.");
-          }
+            if (_context.Positions == null)
+            {
+                return Problem("Entity set 'DataContext.Positions'  is null.");
+            }
             _context.Positions.Add(position);
             await _context.SaveChangesAsync();
 

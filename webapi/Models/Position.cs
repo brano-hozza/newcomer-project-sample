@@ -12,9 +12,9 @@ namespace WebApi.Models
         public string Name { get; set; } = "";
 
         [InverseProperty("Position")]
-        public List<User> Users { get; set; } = null!;
+        public virtual List<User> Users { get; set; } = new List<User>();
 
         [InverseProperty("Position")]
-        public List<PositionChange> PositionChanges { get; set; } = null!;
+        public virtual List<PositionChange> PositionChanges { get; set; } = new List<PositionChange>();
     }
 }
