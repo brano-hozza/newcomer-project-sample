@@ -13,13 +13,6 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(useUsersStore, ["fetchUsers"]),
-    /**
-     * Method to check if a route is active
-     * @param path - The path to the route
-     */
-    isActiveRoute(path: string) {
-      return this.$route.path === path;
-    },
   },
 });
 </script>

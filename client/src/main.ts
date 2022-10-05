@@ -3,7 +3,8 @@ import App from "./App.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "./routes";
 import { createPinia } from "pinia";
-import "./styles/index.css";
+import "bootstrap";
+import "./styles/index.scss";
 createApp(App)
   .use(createPinia())
   .use(

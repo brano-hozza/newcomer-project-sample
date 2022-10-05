@@ -13,12 +13,12 @@ export const useUsersStore = defineStore("users", {
     async fetchUsers() {
       this.loading = true;
       try {
-        const response = await fetch("http://localhost:3030/users");
+        const response = await fetch("http://localhost:5000/api/users");
         this.users = await response.json();
       } catch (e) {
         this.users = [];
       }
-      setTimeout(() => (this.loading = false), 5000);
+      this.loading = false;
     },
   },
 });
