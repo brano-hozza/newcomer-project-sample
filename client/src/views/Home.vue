@@ -1,25 +1,25 @@
 <script lang="ts">
-import { defineComponent } from "vue";
-import { RouteRecordNormalized } from "vue-router";
+import { defineComponent } from 'vue';
+import { RouteRecordNormalized } from 'vue-router';
 
 export default defineComponent({
-  name: "Home",
-  data: () => ({
-    routes: [] as RouteRecordNormalized[],
-  }),
-  mounted() {
-    this.routes = this.$router.getRoutes().filter((route) => route.meta?.nav);
-  },
-  computed: {},
-  methods: {
-    /**
+	name: 'HomeView',
+	data: () => ({
+		routes: [] as RouteRecordNormalized[]
+	}),
+	computed: {},
+	mounted() {
+		this.routes = this.$router.getRoutes().filter(route => route.meta?.nav);
+	},
+	methods: {
+		/**
      * Method to check if a route is active
      * @param path - The path to the route
      */
-    isActiveRoute(path: string) {
-      return this.$route.path === path;
-    },
-  },
+		isActiveRoute(path: string) {
+			return this.$route.path === path;
+		}
+	}
 });
 </script>
 <template>
@@ -33,8 +33,7 @@ export default defineComponent({
             :key="route.path"
             class="mx-2 border-2 border-neutral-600 px-2"
             :class="{ 'border-red-500': isActiveRoute(route.path) }"
-            @click="$router.push(route.path)"
-          >
+            @click="$router.push(route.path)">
             {{ route.name }}
           </li>
         </ul>
