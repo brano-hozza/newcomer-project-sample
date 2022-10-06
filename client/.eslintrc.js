@@ -11,7 +11,8 @@ module.exports = {
 		'plugin:@typescript-eslint/recommended',
 		// 'requiring-type-checking' rules are not working with Vue right now
 		//"plugin:@typescript-eslint/recommended-requiring-type-checking"
-		'plugin:vue/recommended'
+		'plugin:vue/recommended',
+		'prettier'
 	],
 	globals: {
 		Atomics: 'readonly',
@@ -35,7 +36,6 @@ module.exports = {
 		'comma-dangle': 'error',
 		curly: 'error',
 		'default-case': 'error',
-		'brace-style': ['error', 'stroustrup'],
 		'eol-last': 'error',
 		eqeqeq: [
 			'error',

@@ -1,5 +1,5 @@
 //Type definition for the position object
-export interface Position {
+export interface IPosition {
 	id: number;
 	name: string;
 }

@@ -27,6 +27,19 @@ export const routes: RouteRecordRaw[] = [
 				meta: {
 					nav: true
 				}
+			},
+			{
+				path: '/details/:id',
+				name: 'Details',
+				component: () => import('../views/EmployeeDetail.vue')
+			},
+			{
+				path: '/details/edit/:id',
+				name: 'Details edit',
+				component: () => import('../views/EmployeeDetail.vue'),
+				meta: {
+					edit: true
+				}
 			}
 		]
 	}

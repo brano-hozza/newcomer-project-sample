@@ -1,5 +1,5 @@
 //Type definition for the user object
-export interface User {
+export interface IUser {
 	id: number;
 	name: string;
 	surname: string;
