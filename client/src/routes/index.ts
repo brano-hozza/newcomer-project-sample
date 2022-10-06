@@ -6,7 +6,7 @@ export const routes: RouteRecordRaw[] = [
 		children: [
 			{
 				path: '/',
-				name: 'Current employees',
+				name: 'Aktuálni zamestnanci',
 				component: () => import('../views/CurrentEmployees.vue'),
 				meta: {
 					nav: true
@@ -14,7 +14,7 @@ export const routes: RouteRecordRaw[] = [
 			},
 			{
 				path: '/old',
-				name: 'Old employees',
+				name: 'Bývalí zamestnanci',
 				component: () => import('../views/OldEmployees.vue'),
 				meta: {
 					nav: true
@@ -22,7 +22,7 @@ export const routes: RouteRecordRaw[] = [
 			},
 			{
 				path: '/positions',
-				name: 'Positions',
+				name: 'Pozície',
 				component: () => import('../views/Positions.vue'),
 				meta: {
 					nav: true

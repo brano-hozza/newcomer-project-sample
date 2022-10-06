@@ -35,7 +35,18 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-            return await db.Users.Include(u => u.Position).Where(user => !user.Resigned).Select(user => mapper.Map<UserDTO>(user)).ToArrayAsync();
+            return await db.Users.Include(u => u.Position).Where(user => user.ResignedDate == null).Select(user => mapper.Map<UserDTO>(user)).ToArrayAsync();
+        }
+
+        // GET: api/Users/old
+        [HttpGet("old")]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetOldUsers()
+        {
+            if (db.Users == null)
+            {
+                return NotFound();
+            }
+            return await db.Users.Include(u => u.Position).Where(user => user.ResignedDate != null).Select(user => mapper.Map<UserDTO>(user)).ToArrayAsync();
         }
 
         // GET: api/Users/5
@@ -151,7 +162,7 @@ namespace WebApi.Controllers
             }
             if (soft)
             {
-                user.Resigned = true;
+                user.ResignedDate = System.DateTime.Now;
                 db.Entry(user).State = EntityState.Modified;
             }
             else

@@ -11,6 +11,6 @@ namespace WebApi.Models
         public DateTime StartDate { get; set; }
         public float Salary { get; set; }
         public int Position { get; set; }
-        public bool Resigned { get; set; }
+        public DateTime? ResignedDate { get; set; }
     }
 }

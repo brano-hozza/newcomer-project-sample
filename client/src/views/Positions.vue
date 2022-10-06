@@ -18,45 +18,34 @@ export default defineComponent({
 });
 </script>
 <template>
-  <div>
-    <h1 class="text-xl m-2 font-semibold">
-      Positions
-    </h1>
-    <div
-      v-if="loading"
-      class="text-center">
-      <div class="lds-ring">
-        <div />
-        <div />
-        <div />
-        <div />
-      </div>
-    </div>
-    <div v-else>
-      <table class="table mx-2">
-        <thead>
-          <tr>
-            <th scope="col">
-              ID
-            </th>
-            <th scope="col">
-              Name
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="position in positions"
-            :key="position.id">
-            <th scope="row">
-              {{ position.id }}
-            </th>
-            <td>{{ position.name }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+	<div>
+		<h1 class="text-xl m-2 font-semibold">{{ $route.name }}</h1>
+		<div v-if="loading" class="text-center">
+			<div class="lds-ring">
+				<div />
+				<div />
+				<div />
+				<div />
+			</div>
+		</div>
+		<div v-else>
+			<table class="table mx-2">
+				<thead>
+					<tr>
+						<th scope="col">ID</th>
+						<th scope="col">Name</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="position in positions" :key="position.id">
+						<th scope="row">
+							{{ position.id }}
+						</th>
+						<td>{{ position.name }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </template>
-<style lang="scss">
-</style>
+<style lang="scss"></style>

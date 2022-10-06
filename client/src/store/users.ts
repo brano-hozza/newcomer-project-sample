@@ -29,6 +29,21 @@ export const useUsersStore = defineStore('users', {
 			this.loading = false;
 		},
 		/**
+		 * Action to fetch users from the API
+		 */
+		async fetchOldUsers() {
+			this.loading = true;
+			try {
+				const response = await fetch(
+					'http://localhost:5000/api/users/old'
+				);
+				this.users = await response.json();
+			} catch (e) {
+				this.users = [];
+			}
+			this.loading = false;
+		},
+		/**
 		 * Action to fetch user details from the API
 		 * @param id - user id
 		 */

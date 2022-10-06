@@ -8,4 +8,5 @@ export interface IUser {
 	startDate: string;
 	position: number; // defines user position based on DB value
 	salary: number;
+	resignedDate?: string;
 }

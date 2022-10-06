@@ -26,12 +26,11 @@ namespace WebApi.Models
         [Required]
         public float Salary { get; set; }
 
-        public bool Resigned { get; set; }
+        public DateTime? ResignedDate { get; set; }
         // References
         public virtual Position Position { get; set; } = null!;
 
         [InverseProperty("User")]
         public virtual List<PositionChange> PositionChanges { get; set; } = new List<PositionChange>();
-
     }
 }

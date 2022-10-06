@@ -50,7 +50,7 @@ export default defineComponent({
 </script>
 <template>
 	<article>
-		<h1 class="text-xl m-2 font-semibold">Current employees</h1>
+		<h1 class="text-xl m-2 font-semibold">{{ $route.name }}</h1>
 		<table class="table-auto mx-2">
 			<thead>
 				<tr>
