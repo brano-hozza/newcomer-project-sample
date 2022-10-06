@@ -4,9 +4,18 @@ import { defineComponent } from 'vue';
 
 import { usePositionsStore } from '../store/positions';
 import { useUsersStore } from '../store/users';
+type State = {
+	selectedUser?: {
+		id: number;
+		name: string;
+	};
+	showDelete: boolean;
+};
 export default defineComponent({
 	name: 'CurrentEmployees',
-	data: () => ({}),
+	data: (): State => ({
+		showDelete: false
+	}),
 	computed: {
 		...mapState(useUsersStore, ['users', 'loading']),
 		...mapState(usePositionsStore, {
@@ -21,8 +30,21 @@ export default defineComponent({
 		await this.fetchPositions(), await this.fetchUsers();
 	},
 	methods: {
-		...mapActions(useUsersStore, ['fetchUsers']),
-		...mapActions(usePositionsStore, ['fetchPositions'])
+		...mapActions(useUsersStore, ['fetchUsers', 'deleteUser']),
+		...mapActions(usePositionsStore, ['fetchPositions']),
+		promptDelete(id: number, name: string) {
+			this.selectedUser = { id, name };
+			this.showDelete = true;
+		},
+		cancelDelete() {
+			this.showDelete = false;
+			delete this.selectedUser;
+		},
+		async confirmDelete() {
+			await this.deleteUser(this.selectedUser?.id as number);
+			this.showDelete = false;
+			delete this.selectedUser;
+		}
 	}
 });
 </script>
@@ -66,7 +88,13 @@ export default defineComponent({
 					</td>
 					<td class="border px-4 py-2">
 						<button
-							class="bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded">
+							class="bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded"
+							@click="
+								promptDelete(
+									user.id,
+									`${user.name} ${user.surname}`
+								)
+							">
 							Zmazat
 						</button>
 					</td>
@@ -79,49 +107,33 @@ export default defineComponent({
 					<th><span class="placeholder col-11" /></th>
 					<th><span class="placeholder col-11" /></th>
 					<th><span class="placeholder col-11" /></th>
-					<th><span class="placeholder col-11" /></th>
-					<th><span class="placeholder col-11" /></th>
-					<th><span class="placeholder col-11" /></th>
 				</tr>
 			</tbody>
 		</table>
+		<div
+			v-if="showDelete"
+			class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center"
+			@click.self="cancelDelete">
+			<div class="bg-white w-80 h-44 flex justify-evenly flex-col p-4">
+				<h3 class="m-2 text-xl font-bold">Vymazanie zaznamu</h3>
+				<p class="m-4">
+					Naozaj chcete vymazat zaznam o pouzivatelovi
+					{{ selectedUser?.name }}?
+				</p>
+				<span class="flex justify-evenly mb-3">
+					<button
+						class="bg-gray-500 hover:bg-gray-700 text-white py-1 px-4 rounded"
+						@click="cancelDelete">
+						Zrusit
+					</button>
+					<button
+						class="bg-yellow-500 hover:bg-yellow-700 text-blck py-1 px-4 rounded"
+						@click="confirmDelete">
+						Potvrdit
+					</button>
+				</span>
+			</div>
+		</div>
 	</article>
 </template>
-<style lang="scss">
-// Source: https://loading.io/css/
-.lds-ring {
-	display: inline-block;
-	position: relative;
-	width: 80px;
-	height: 80px;
-	div {
-		box-sizing: border-box;
-		display: block;
-		position: absolute;
-		width: 64px;
-		height: 64px;
-		margin: 8px;
-		border: 8px solid rgb(0, 0, 0);
-		border-radius: 50%;
-		animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-		border-color: rgb(0, 0, 0) transparent transparent transparent;
-		&:nth-child(1) {
-			animation-delay: -0.45s;
-		}
-		&:nth-child(2) {
-			animation-delay: -0.3s;
-		}
-		&:nth-child(3) {
-			animation-delay: -0.15s;
-		}
-	}
-}
-@keyframes lds-ring {
-	0% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(360deg);
-	}
-}
-</style>
+<style lang="scss"></style>

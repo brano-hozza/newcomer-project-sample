@@ -52,7 +52,6 @@ module.exports = {
 			}
 		],
 		'linebreak-style': ['error', 'windows'],
-		'max-len': ['error', { code: 120, ignorePattern: '^import .*' }],
 		'no-console': 'error',
 		'no-debugger': 'error',
 		'no-eval': 'error',

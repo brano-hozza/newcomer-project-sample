@@ -32,7 +32,7 @@ namespace WebApi.API
             .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 
-            services.AddCors(options => options.AddPolicy(name: "AllowLocalhost", policy => policy.WithOrigins("http://localhost:3000")));
+            services.AddCors(options => options.AddPolicy(name: "AllowLocalhost", policy => policy.WithOrigins("http://localhost:3000").AllowAnyMethod()));
 
             var connectionString = Configuration.GetConnectionString("WebApiDatabase");
             services.AddTransient<IDbConnection>(_ =>

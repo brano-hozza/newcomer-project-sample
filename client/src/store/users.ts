@@ -43,6 +43,23 @@ export const useUsersStore = defineStore('users', {
 				this.userDetails = null;
 			}
 			this.loading = false;
+		},
+		/**
+		 * Action to delete user
+		 * @param id - user id
+		 */
+		async deleteUser(id: number) {
+			this.loading = true;
+			try {
+				await fetch(`http://localhost:5000/api/users/${id}`, {
+					method: 'DELETE'
+				});
+				this.users = this.users.filter(user => user.id !== id);
+			} catch (e) {
+				//eslint-disable-next-line no-console
+				console.log(e);
+			}
+			this.loading = false;
 		}
 	}
 });
