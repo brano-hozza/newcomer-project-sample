@@ -40,8 +40,8 @@ export default defineComponent({
 			this.showDelete = false;
 			delete this.selectedUser;
 		},
-		async confirmDelete() {
-			await this.deleteUser(this.selectedUser?.id as number);
+		async confirmDelete(soft = false) {
+			await this.deleteUser(this.selectedUser?.id as number, soft);
 			this.showDelete = false;
 			delete this.selectedUser;
 		}
@@ -127,8 +127,13 @@ export default defineComponent({
 						Zrusit
 					</button>
 					<button
-						class="bg-yellow-500 hover:bg-yellow-700 text-blck py-1 px-4 rounded"
-						@click="confirmDelete">
+						class="bg-yellow-500 hover:bg-yellow-700 text-black py-1 px-4 rounded"
+						@click="confirmDelete(true)">
+						Archivovat
+					</button>
+					<button
+						class="bg-red-700 hover:bg-red-700 text-white py-1 px-4 rounded"
+						@click="confirmDelete()">
 						Potvrdit
 					</button>
 				</span>

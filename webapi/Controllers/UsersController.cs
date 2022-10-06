@@ -35,7 +35,7 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-            return await db.Users.Include(u => u.Position).Select(user => mapper.Map<UserDTO>(user)).ToArrayAsync();
+            return await db.Users.Include(u => u.Position).Where(user => !user.Resigned).Select(user => mapper.Map<UserDTO>(user)).ToArrayAsync();
         }
 
         // GET: api/Users/5
@@ -125,9 +125,20 @@ namespace WebApi.Controllers
             return CreatedAtAction("GetUser", new { id = user.Id }, dto);
         }
 
+        // DELETE: api/Users/5/soft
+        [HttpDelete("{id}/soft")]
+        public async Task<IActionResult> SoftDeleteUser(int id)
+        {
+            return await DeleteUser(id, true);
+        }
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> NormalDeleteUser(int id)
+        {
+            return await DeleteUser(id);
+        }
+
+        private async Task<IActionResult> DeleteUser(int id, bool soft = false)
         {
             if (db.Users == null)
             {
@@ -138,8 +149,15 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-
-            db.Users.Remove(user);
+            if (soft)
+            {
+                user.Resigned = true;
+                db.Entry(user).State = EntityState.Modified;
+            }
+            else
+            {
+                db.Users.Remove(user);
+            }
             await db.SaveChangesAsync();
 
             return NoContent();

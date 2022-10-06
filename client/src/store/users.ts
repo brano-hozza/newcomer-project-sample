@@ -48,12 +48,17 @@ export const useUsersStore = defineStore('users', {
 		 * Action to delete user
 		 * @param id - user id
 		 */
-		async deleteUser(id: number) {
+		async deleteUser(id: number, soft: boolean) {
 			this.loading = true;
 			try {
-				await fetch(`http://localhost:5000/api/users/${id}`, {
-					method: 'DELETE'
-				});
+				await fetch(
+					`http://localhost:5000/api/users/${id}${
+						soft ? '/soft' : ''
+					}`,
+					{
+						method: 'DELETE'
+					}
+				);
 				this.users = this.users.filter(user => user.id !== id);
 			} catch (e) {
 				//eslint-disable-next-line no-console
