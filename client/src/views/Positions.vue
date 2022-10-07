@@ -8,12 +8,16 @@ import { IPosition } from '../types/position';
 type State = {
 	selectedPosition?: IPosition;
 	showDelete: boolean;
+	showNewPosition: boolean;
+	positionName: string;
 };
 export default defineComponent({
 	name: 'PositionsView',
 	components: { PositionRow },
 	data: (): State => ({
-		showDelete: false
+		showDelete: false,
+		showNewPosition: false,
+		positionName: ''
 	}),
 	computed: {
 		...mapState(usePositionsStore, [
@@ -26,7 +30,11 @@ export default defineComponent({
 		await this.fetchPositions();
 	},
 	methods: {
-		...mapActions(usePositionsStore, ['fetchPositions', 'deletePosition']),
+		...mapActions(usePositionsStore, [
+			'fetchPositions',
+			'deletePosition',
+			'createPosition'
+		]),
 		promptDelete(id: number) {
 			this.selectedPosition = this.positions.find(
 				position => position.id === id
@@ -41,13 +49,32 @@ export default defineComponent({
 			await this.deletePosition(this.selectedPosition?.id as number);
 			this.showDelete = false;
 			delete this.selectedPosition;
+		},
+		newPosition() {
+			this.showNewPosition = true;
+		},
+		async savePosition() {
+			this.showNewPosition = false;
+			await this.createPosition(this.positionName);
+			this.positionName = '';
+		},
+		cancelCreation() {
+			this.showNewPosition = false;
+			this.positionName = '';
 		}
 	}
 });
 </script>
 <template>
 	<div>
-		<h1 class="text-xl m-2 font-semibold">{{ $route.name }}</h1>
+		<span class="flex justify-between px-4">
+			<h1 class="text-xl m-2 font-semibold">{{ $route.name }}</h1>
+			<button
+				class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded"
+				@click="newPosition">
+				Vytvorit novu poziciu
+			</button>
+		</span>
 		<table class="table mx-2">
 			<thead>
 				<tr>
@@ -93,6 +120,39 @@ export default defineComponent({
 						class="bg-red-700 hover:bg-red-700 text-white py-1 px-4 rounded"
 						@click="confirmDelete()">
 						Potvrdit
+					</button>
+				</span>
+			</div>
+		</div>
+
+		<div
+			v-if="showNewPosition"
+			class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center"
+			@click.self="cancelCreation">
+			<div class="bg-white w-80 h-44 flex justify-evenly flex-col p-4">
+				<h3 class="m-2 text-xl font-bold">Nova pozicia</h3>
+				<div class="w-full my-2">
+					<label
+						for="name"
+						class="block mb-2 text-lg font-medium text-gray-900">
+						Nazov pozicie:
+					</label>
+					<input
+						id="name"
+						v-model="positionName"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+						placeholder="Nazov pozicie..." />
+				</div>
+				<span class="flex justify-evenly mb-3">
+					<button
+						class="bg-gray-500 hover:bg-gray-700 text-white py-1 px-4 rounded"
+						@click="cancelCreation">
+						Zrusit
+					</button>
+					<button
+						class="bg-red-700 hover:bg-red-700 text-white py-1 px-4 rounded"
+						@click="savePosition()">
+						Ulozit
 					</button>
 				</span>
 			</div>

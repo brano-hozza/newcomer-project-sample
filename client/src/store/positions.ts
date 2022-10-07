@@ -58,6 +58,33 @@ export const usePositionsStore = defineStore('positions', {
 				console.log(e);
 			}
 			this.loading = false;
+		},
+		/**
+		 * Action to create a new position
+		 * @param name - name of the position
+		 */
+		async createPosition(name: string) {
+			this.loading = true;
+			try {
+				const resp = await fetch(
+					'http://localhost:5000/api/positions',
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							name
+						})
+					}
+				);
+				const position = await resp.json();
+				this.positions.push(position);
+			} catch (e) {
+				// eslint-disable-next-line no-console
+				console.log(e);
+			}
+			this.loading = false;
 		}
 	}
 });
