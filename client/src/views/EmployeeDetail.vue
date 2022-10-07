@@ -78,7 +78,7 @@ export default defineComponent({
 				birthDate: this.birthDate,
 				position: this.position,
 				salary: this.salary,
-				startDate: ''
+				startDate: new Date().toISOString().slice(0, 10)
 			};
 			if (this.editing) {
 				user.startDate = this.userDetails?.startDate as string;

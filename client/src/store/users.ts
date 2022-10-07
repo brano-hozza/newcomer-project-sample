@@ -112,14 +112,15 @@ export const useUsersStore = defineStore('users', {
 		async createUser(user: IUser) {
 			this.loading = true;
 			try {
-				await fetch('http://localhost:5000/api/users', {
+				const resp = await fetch('http://localhost:5000/api/users', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(user)
 				});
-				this.users = [...this.users, user];
+				const newUser = (await resp.json()) as IUser;
+				this.users = [...this.users, newUser];
 			} catch (e) {
 				//eslint-disable-next-line no-console
 				console.log(e);
