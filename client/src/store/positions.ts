@@ -27,6 +27,25 @@ export const usePositionsStore = defineStore('positions', {
 				this.positions = [];
 			}
 			this.loading = false;
+		},
+		/**
+		 * Action to delete a position
+		 * @param id - ID of the position to delete
+		 */
+		async deletePosition(id: number) {
+			this.loading = true;
+			try {
+				await fetch(`http://localhost:5000/api/positions/${id}`, {
+					method: 'DELETE'
+				});
+				this.positions = this.positions.filter(
+					position => position.id !== id
+				);
+			} catch (e) {
+				// eslint-disable-next-line no-console
+				console.error(e);
+			}
+			this.loading = false;
 		}
 	}
 });

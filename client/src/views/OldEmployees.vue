@@ -89,7 +89,8 @@ export default defineComponent({
 				<h3 class="m-2 text-xl font-bold">Vymazanie zaznamu</h3>
 				<p class="m-4">
 					Naozaj chcete vymazat zaznam o pouzivatelovi
-					{{ selectedUser?.name }}?
+					<b>{{ selectedUser?.name }}</b>
+					?
 				</p>
 				<span class="flex justify-evenly mb-3">
 					<button
