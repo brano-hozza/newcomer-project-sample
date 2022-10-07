@@ -2,6 +2,7 @@
 import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
+import UserRow from '../components/UserRow.vue';
 import { usePositionsStore } from '../store/positions';
 import { useUsersStore } from '../store/users';
 type State = {
@@ -13,6 +14,7 @@ type State = {
 };
 export default defineComponent({
 	name: 'OldEmployees',
+	components: { UserRow },
 	data: (): State => ({
 		showDelete: false
 	}),
@@ -62,32 +64,12 @@ export default defineComponent({
 				</tr>
 			</thead>
 			<tbody v-if="!loading">
-				<tr v-for="user in users" :key="user.id">
-					<th class="border px-4 py-2">
-						{{ user.id }}
-					</th>
-					<td class="border px-4 py-2">
-						<router-link :to="'/details/' + user.id">
-							{{ user.name }} {{ user.surname }}
-						</router-link>
-					</td>
-					<td class="border px-4 py-2">
-						{{ new Date(user.resignedDate!).toUTCString() }}
-					</td>
-					<td class="border px-4 py-2"></td>
-					<td class="border px-4 py-2">
-						<button
-							class="bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded"
-							@click="
-								promptDelete(
-									user.id,
-									`${user.name} ${user.surname}`
-								)
-							">
-							Zmazat
-						</button>
-					</td>
-				</tr>
+				<user-row
+					v-for="user in users"
+					:key="user.id"
+					:user="user"
+					old
+					@delete="promptDelete" />
 			</tbody>
 			<tbody v-else>
 				<tr v-for="_ in [1, 2, 3, 4, 5]" :key="_">
