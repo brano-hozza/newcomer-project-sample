@@ -34,7 +34,8 @@ namespace WebApi.API
 
             services.AddCors(options => options.AddPolicy(name: "AllowLocalhost", policy => policy
             .WithOrigins("http://localhost:3000")
-            .AllowAnyMethod()
+            .WithMethods("GET", "POST", "PUT", "DELETE")
+            .WithHeaders("Content-Type")
             ));
 
             var connectionString = Configuration.GetConnectionString("WebApiDatabase");

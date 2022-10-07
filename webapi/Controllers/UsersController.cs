@@ -24,6 +24,7 @@ namespace WebApi.Controllers
                 cfg.CreateMap<User, UserDTO>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.Position.Id));
                 cfg.CreateMap<UserDTO, User>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => db.Positions.FirstOrDefault(p => p.Id == src.Position)));
                 cfg.CreateMap<Position, PositionDTO>();
+                cfg.CreateMap<PositionChange, PositionChangeDTO>().ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.Position.Id));
             });
             mapper = new Mapper(config);
         }
@@ -74,19 +75,19 @@ namespace WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, UserDTO dto)
         {
-            User? user = await db.Users.Include(u => u.Position).FirstOrDefaultAsync();
+            User? user = await db.Users.Include(u => u.Position).Where(u => u.Id == id).FirstOrDefaultAsync();
             Position? position = await db.Positions.FindAsync(dto.Position);
 
             if (user == null || position == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             // Check if position changed
             if (user.Position.Id != dto.Position)
             {
                 // Get last position
-                PositionChange? change = db.PositionChanges.Where(pc => pc.User.Id == user.Id).OrderByDescending(pc => pc.StartDate).FirstOrDefault();
+                PositionChange? change = db.PositionChanges.Where(pc => pc.User.Id == id).OrderByDescending(pc => pc.StartDate).FirstOrDefault();
                 if (change == null)
                 {
                     return BadRequest();
@@ -105,7 +106,11 @@ namespace WebApi.Controllers
             }
             // Update user info
             db.Entry(user).State = EntityState.Modified;
-            user = mapper.Map(dto, user);
+            user.Name = dto.Name;
+            user.Surname = dto.Surname;
+            user.BirthDate = dto.BirthDate;
+            user.Position = position;
+            user.Salary = dto.Salary;
 
             try
             {
@@ -187,6 +192,22 @@ namespace WebApi.Controllers
         private bool UserExists(int id)
         {
             return (db.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        // GET: api/Users/5/history
+        [HttpGet("{id}/history")]
+        public async Task<ActionResult<IEnumerable<PositionChangeDTO>>> GetPositionChanges(int id)
+        {
+            if (db.Users == null)
+            {
+                return NotFound();
+            }
+            var user = await db.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return await db.PositionChanges.Include(pc => pc.Position).Where(pc => pc.User.Id == id).Select(pc => mapper.Map<PositionChangeDTO>(pc)).ToArrayAsync();
         }
     }
 }
