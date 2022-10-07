@@ -96,9 +96,15 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-
-            _context.Positions.Remove(position);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Positions.Remove(position);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return Conflict();
+            }
 
             return NoContent();
         }

@@ -12,6 +12,7 @@ type State = {
 	};
 	showDelete: boolean;
 };
+
 export default defineComponent({
 	name: 'CurrentEmployees',
 	components: { UserRow },
@@ -19,14 +20,7 @@ export default defineComponent({
 		showDelete: false
 	}),
 	computed: {
-		...mapState(useUsersStore, ['users', 'loading']),
-		...mapState(usePositionsStore, {
-			positions: state =>
-				state.positions.reduce((acc, val) => {
-					acc[val.id] = val.name;
-					return acc;
-				}, [] as string[])
-		})
+		...mapState(useUsersStore, ['users', 'loading'])
 	},
 	async mounted() {
 		await this.fetchPositions(), await this.fetchUsers();

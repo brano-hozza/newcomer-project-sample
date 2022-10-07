@@ -5,12 +5,14 @@ import { IPosition } from '../types/position';
 type TPositionState = {
 	positions: IPosition[];
 	loading: boolean;
+	referenceExists: boolean;
 };
 
 export const usePositionsStore = defineStore('positions', {
 	state: (): TPositionState => ({
 		positions: [],
-		loading: false
+		loading: false,
+		referenceExists: false
 	}),
 	actions: {
 		/**
@@ -35,15 +37,25 @@ export const usePositionsStore = defineStore('positions', {
 		async deletePosition(id: number) {
 			this.loading = true;
 			try {
-				await fetch(`http://localhost:5000/api/positions/${id}`, {
-					method: 'DELETE'
-				});
-				this.positions = this.positions.filter(
-					position => position.id !== id
+				const resp = await fetch(
+					`http://localhost:5000/api/positions/${id}`,
+					{
+						method: 'DELETE'
+					}
 				);
+				if (resp.status === 204) {
+					this.positions = this.positions.filter(
+						position => position.id !== id
+					);
+				} else if (resp.status === 409) {
+					this.referenceExists = true;
+					setTimeout(() => {
+						this.referenceExists = false;
+					}, 3000);
+				}
 			} catch (e) {
 				// eslint-disable-next-line no-console
-				console.error(e);
+				console.log(e);
 			}
 			this.loading = false;
 		}

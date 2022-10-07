@@ -16,7 +16,11 @@ export default defineComponent({
 		showDelete: false
 	}),
 	computed: {
-		...mapState(usePositionsStore, ['positions', 'loading'])
+		...mapState(usePositionsStore, [
+			'positions',
+			'loading',
+			'referenceExists'
+		])
 	},
 	async mounted() {
 		await this.fetchPositions();
@@ -92,6 +96,16 @@ export default defineComponent({
 					</button>
 				</span>
 			</div>
+		</div>
+		<div
+			v-if="referenceExists"
+			class="fixed right-0 bottom-0 bg-gray-100 w-80 h-44 flex justify-evenly flex-col p-4 border-red-400 border-solid border-2">
+			<h3 class="m-2 text-xl font-bold">Vymazanie zaznamu zlyhalo</h3>
+			<p class="m-4">
+				Nie je mozne vymazat poziciu
+				<b>{{ selectedPosition?.name }}</b>
+				, pretoze je priradena k nejakej osobe.
+			</p>
 		</div>
 	</div>
 </template>

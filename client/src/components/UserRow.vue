@@ -5,6 +5,9 @@ import { defineComponent, PropType } from 'vue';
 import { usePositionsStore } from '../store/positions';
 import { IUser } from '../types/user';
 
+type ChangedPositions = {
+	[key: number]: string;
+};
 export default defineComponent({
 	name: 'UserRow',
 	props: {
@@ -17,7 +20,16 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		...mapState(usePositionsStore, ['positions'])
+		...mapState(usePositionsStore, {
+			positions: state =>
+				state.positions.reduce(
+					(acc: ChangedPositions, val): ChangedPositions => {
+						acc[val.id] = val.name;
+						return acc;
+					},
+					{}
+				)
+		})
 	}
 });
 </script>
@@ -34,7 +46,7 @@ export default defineComponent({
 			</router-link>
 		</td>
 		<td v-if="!old" class="border px-4 py-2">
-			{{ positions[user.position].name }}
+			{{ positions[user.position] }}
 		</td>
 		<td v-else class="border px-4 py-2">
 			{{ new Date(user.resignedDate!).toUTCString() }}
