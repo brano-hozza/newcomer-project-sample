@@ -49,7 +49,15 @@ export default defineComponent({
 </script>
 <template>
 	<article>
-		<h1 class="text-xl m-2 font-semibold">{{ $route.name }}</h1>
+		<span class="flex justify-between px-4">
+			<h1 class="text-xl m-2 font-semibold">{{ $route.name }}</h1>
+			<button
+				class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded"
+				@click="$router.push({ name: 'New Employee' })">
+				Vytvorit noveho zamestnanca
+			</button>
+		</span>
+
 		<table class="table-auto mx-2">
 			<thead>
 				<tr>
@@ -84,6 +92,7 @@ export default defineComponent({
 			@click.self="cancelDelete">
 			<div class="bg-white w-80 h-44 flex justify-evenly flex-col p-4">
 				<h3 class="m-2 text-xl font-bold">Vymazanie zaznamu</h3>
+
 				<p class="m-4">
 					Naozaj chcete vymazat zaznam o pouzivatelovi
 					<b>{{ selectedUser?.name }}</b>

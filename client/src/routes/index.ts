@@ -40,6 +40,14 @@ export const routes: RouteRecordRaw[] = [
 				meta: {
 					edit: true
 				}
+			},
+			{
+				path: '/details/new',
+				name: 'New Employee',
+				component: () => import('../views/EmployeeDetail.vue'),
+				meta: {
+					new: true
+				}
 			}
 		]
 	}

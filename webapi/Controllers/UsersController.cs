@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -81,24 +82,28 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
 
+            // Check if position changed
             if (user.Position.Id != dto.Position)
             {
+                // Get last position
                 PositionChange? change = db.PositionChanges.Where(pc => pc.User.Id == user.Id).OrderByDescending(pc => pc.StartDate).FirstOrDefault();
                 if (change == null)
                 {
                     return BadRequest();
                 }
-                change.EndDate = System.DateTime.Now;
+                // Set end date
+                change.EndDate = DateTime.Now;
                 db.Entry(change).State = EntityState.Modified;
+                // Add new position change
                 PositionChange newChange = new()
                 {
-                    StartDate = System.DateTime.Now,
+                    StartDate = DateTime.Now,
                     User = user,
                     Position = position
                 };
                 db.PositionChanges.Add(newChange);
             }
-
+            // Update user info
             db.Entry(user).State = EntityState.Modified;
             user = mapper.Map(dto, user);
 
@@ -129,8 +134,13 @@ namespace WebApi.Controllers
                 return Problem("Position not found.");
             }
             User user = mapper.Map<User>(dto);
+            // Get current time
+            DateTime now = DateTime.Now;
+            user.StartDate = now;
             db.Users.Add(user);
-            db.PositionChanges.Add(new() { Position = position, User = user, StartDate = System.DateTime.Now });
+
+            // Create position change
+            db.PositionChanges.Add(new() { Position = position, User = user, StartDate = now });
             await db.SaveChangesAsync();
 
             return CreatedAtAction("GetUser", new { id = user.Id }, dto);
