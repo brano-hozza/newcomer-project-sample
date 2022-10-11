@@ -93,19 +93,19 @@ export default defineComponent({
 <template>
 	<div>
 		<span class="flex justify-between px-4">
-			<h1 class="text-xl m-2 font-semibold">{{ $route.name }}</h1>
+			<h1 class="text-2xl m-2 font-semibold">{{ $route.name }}</h1>
 			<button
 				class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded"
 				@click="newPosition">
-				Vytvorit novu poziciu
+				Vytvoriť novú pozíciu
 			</button>
 		</span>
-		<table class="table mx-2">
+		<table v-if="positions.length > 0 || loading" class="table mx-2">
 			<thead>
 				<tr>
 					<th class="px-4 py-2">ID</th>
-					<th class="px-4 py-2">Name</th>
-					<th class="px-4 py-2">Actions</th>
+					<th class="px-4 py-2">Názov pozície</th>
+					<th class="px-4 py-2" />
 				</tr>
 			</thead>
 			<tbody v-if="!loading">
@@ -116,22 +116,23 @@ export default defineComponent({
 					@delete="promptDelete" />
 			</tbody>
 			<tbody v-else>
-				<tr v-for="_ in [1, 2, 3, 4, 5]" :key="_">
-					<th><span class="placeholder col-11" /></th>
-					<th><span class="placeholder col-11" /></th>
-					<th><span class="placeholder col-11" /></th>
-				</tr>
+				<PositionRow
+					v-for="_ in [1, 2, 3, 4, 5]"
+					:key="_"
+					placeholder />
 			</tbody>
 		</table>
+
+		<h2 v-else class="text-center text-4xl">Neexistujú žiadne pozície</h2>
 
 		<div
 			v-if="showDelete"
 			class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center"
 			@click.self="cancelDelete">
 			<div class="bg-white w-80 h-44 flex justify-evenly flex-col p-4">
-				<h3 class="m-2 text-xl font-bold">Vymazanie zaznamu</h3>
+				<h3 class="m-2 text-xl font-bold">Vymazanie záznamu</h3>
 				<p class="m-3">
-					Naozaj chcete vymazat poziciu
+					Naozaj chcete vymazať pozíciu
 					<b>{{ selectedPosition?.name }}</b>
 					?
 				</p>
@@ -139,12 +140,12 @@ export default defineComponent({
 					<button
 						class="bg-gray-500 hover:bg-gray-700 text-white py-1 rounded my-2 w-1/3"
 						@click="cancelDelete">
-						Zrusit
+						Zrusiť
 					</button>
 					<button
 						class="bg-red-700 hover:bg-red-700 text-white py-1 rounded my-2 w-1/3"
 						@click="confirmDelete()">
-						Potvrdit
+						Potvrdiť
 					</button>
 				</span>
 			</div>
@@ -155,30 +156,30 @@ export default defineComponent({
 			class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center"
 			@click.self="cancelCreation">
 			<div class="bg-white w-1/5 flex justify-evenly flex-col py-2">
-				<h3 class="m-2 pl-2 text-2xl font-bold">Nova pozicia</h3>
+				<h3 class="m-2 pl-2 text-2xl font-bold">Nová pozícia</h3>
 				<div class="w-9/10 m-2 px-2">
 					<label
 						for="name"
 						class="block mb-2 text-lg font-medium text-gray-900">
-						Nazov pozicie:
+						Názov pozície:
 					</label>
 					<input
 						id="name"
 						v-model="positionName"
 						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-						placeholder="Nazov pozicie..." />
+						placeholder="Názov pozície..." />
 				</div>
 				<span class="flex justify-evenly">
 					<button
 						class="bg-gray-500 hover:bg-gray-700 text-white py-1 rounded my-2 w-1/3"
 						@click="cancelCreation">
-						Zrusit
+						Zrusiť
 					</button>
 					<button
 						class="bg-blue-500 hover:bg-blue-700 text-white py-1 rounded my-2 w-1/3 disabled:bg-blue-100 disabled:text-blue-300 disabled:hover:cursor-not-allowed"
 						:disabled="!canSave"
 						@click="savePosition()">
-						Ulozit
+						Uložiť
 					</button>
 				</span>
 			</div>

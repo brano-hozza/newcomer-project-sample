@@ -28,7 +28,8 @@ export const usePositionsStore = defineStore('positions', {
 			} catch (e) {
 				this.positions = [];
 			}
-			this.loading = false;
+			setTimeout(() => (this.loading = false), 1000);
+			//this.loading = false;
 		},
 		/**
 		 * Action to delete a position

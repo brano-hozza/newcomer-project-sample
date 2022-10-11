@@ -62,3 +62,9 @@ Error Number:547,State:0,Class:16
    at WebApi.Controllers.PositionsController.DeletePosition(Int32 id) in C:\github\newcomer-project-sample\webapi\Controllers\PositionsController.cs:line 84
 2022-10-11T11:03:17.1527123+02:00 0HMLBCTELCQDT:0000000A [ERR] Trying to delete position with references ID:2 (70bc43a7)
 2022-10-11T11:04:34.7353405+02:00  [INF] Application is shutting down... (90f52c38)
+2022-10-11T11:06:35.0212598+02:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-10-11T11:06:35.0320143+02:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-10-11T11:06:35.0324028+02:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-10-11T11:06:35.0324339+02:00  [INF] Content root path: "C:\github\newcomer-project-sample\webapi" (b5d60022)
+2022-10-11T11:06:36.9540321+02:00 0HMLBCVJ7O65B:00000002 [INF] Entity Framework Core "6.0.9" initialized '"DataContext"' using provider '"Microsoft.EntityFrameworkCore.SqlServer":"6.0.9"' with options: "MaxPoolSize=1024 " (d2805559)
+2022-10-11T12:02:33.4148848+02:00  [INF] Application is shutting down... (90f52c38)

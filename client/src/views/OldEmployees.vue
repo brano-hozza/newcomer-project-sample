@@ -64,13 +64,15 @@ export default defineComponent({
 </script>
 <template>
 	<article>
-		<h1 class="text-xl m-2 font-semibold">{{ $route.name }}</h1>
-		<table class="table-auto mx-2">
+		<span class="flex justify-between px-4">
+			<h1 class="text-2xl m-2 font-semibold">{{ $route.name }}</h1>
+		</span>
+		<table v-if="users.length > 0 || loading" class="table-auto mx-2">
 			<thead>
 				<tr>
 					<th class="px-4 py-2">ID</th>
 					<th class="px-4 py-2">Meno</th>
-					<th class="px-4 py-2">Datum prepustenia</th>
+					<th class="px-4 py-2">Dátum prepustenia</th>
 					<th />
 					<th />
 				</tr>
@@ -84,23 +86,24 @@ export default defineComponent({
 					@delete="promptDelete" />
 			</tbody>
 			<tbody v-else>
-				<tr v-for="_ in [1, 2, 3, 4, 5]" :key="_">
-					<th><span class="placeholder col-11" /></th>
-					<th><span class="placeholder col-11" /></th>
-					<th><span class="placeholder col-11" /></th>
-					<th><span class="placeholder col-11" /></th>
-					<th><span class="placeholder col-11" /></th>
-				</tr>
+				<user-row
+					v-for="_ in [1, 2, 3, 4, 5]"
+					:key="_"
+					placeholder
+					old />
 			</tbody>
 		</table>
+		<h2 v-else class="text-center text-4xl">
+			Nie sú archívovaní žiadny zamestnanci
+		</h2>
 		<div
 			v-if="showDelete"
 			class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center"
 			@click.self="cancelDelete">
 			<div class="bg-white w-80 h-44 flex justify-evenly flex-col p-4">
-				<h3 class="m-2 text-xl font-bold">Vymazanie zaznamu</h3>
+				<h3 class="m-2 text-xl font-bold">Vymazanie záznamu</h3>
 				<p class="m-3">
-					Naozaj chcete vymazat zaznam o pouzivatelovi
+					Naozaj chcete vymazať záznam o používateľovi
 					<b>{{ selectedUser?.name }}</b>
 					?
 				</p>
@@ -108,12 +111,12 @@ export default defineComponent({
 					<button
 						class="bg-gray-500 hover:bg-gray-700 text-white py-1 rounded my-2 w-1/3"
 						@click="cancelDelete">
-						Zrusit
+						Zrusiť
 					</button>
 					<button
 						class="bg-red-700 hover:bg-red-700 text-white py-1 rounded my-2 w-1/3"
 						@click="confirmDelete()">
-						Potvrdit
+						Potvrdiť
 					</button>
 				</span>
 			</div>

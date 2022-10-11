@@ -108,7 +108,7 @@ export default defineComponent({
 	<article class="flex justify-center items-center">
 		<div v-if="loading">Loading...</div>
 		<div v-else class="ml-4 w-1/4">
-			<h1 class="text-2xl m-2 font-semibold">
+			<h1 class="text-3xl my-4 font-semibold">
 				{{
 					creation
 						? 'Vytvorenie'
@@ -190,7 +190,7 @@ export default defineComponent({
 				<label
 					for="birthDate"
 					class="block mb-2 text-lg font-medium text-gray-900">
-					*Datum narodenia:
+					*Dátum narodenia:
 				</label>
 				<input
 					id="birthDate"
@@ -203,7 +203,7 @@ export default defineComponent({
 				<label
 					for="startDate"
 					class="block mb-2 text-lg font-medium text-gray-900">
-					*Datum nastupu:
+					*Dátum nástupu:
 				</label>
 				<input
 					id="startDate"
@@ -216,7 +216,7 @@ export default defineComponent({
 				<label
 					for="position"
 					class="block mb-2 text-lg font-medium text-gray-900">
-					*Pozicia:
+					*Pozícia:
 				</label>
 				<select
 					id="position"
@@ -224,7 +224,7 @@ export default defineComponent({
 					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 					@change="changePosition">
 					<option value="-1" disabled :selected="position == -1">
-						Zvolte poziciu
+						Zvoľte pozíciu
 					</option>
 
 					<option
@@ -251,13 +251,13 @@ export default defineComponent({
 					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 					placeholder="Plat zamestnanca..." />
 			</div>
-			<i class="text-gray-300">Povinne udaje su oznacene hviezdickou</i>
+			<i class="text-gray-300">Povinné údaje sú označené hviezdičkou</i>
 			<button
 				v-if="creation || editing"
 				:disabled="!canSave"
 				class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded my-2 w-full disabled:bg-blue-100 disabled:text-blue-300 disabled:hover:cursor-not-allowed"
 				@click="save">
-				Ulozit
+				Uložiť
 			</button>
 		</div>
 	</article>
