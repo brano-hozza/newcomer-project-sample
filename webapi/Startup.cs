@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog.Extensions.Logging;
 using Grace.AspNetCore.MVC;
 using Grace.DependencyInjection;
 using WebApi.Models;
@@ -30,10 +32,7 @@ namespace WebApi.API
             services.AddControllers(options => options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer())))
             .AddNewtonsoftJson(options => options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc)
             .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-
-            services.AddLogging();
-
-
+            services.AddLogging(logging => logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning));
             services.AddCors(options => options.AddPolicy(name: "AllowLocalhost", policy => policy
             .WithOrigins("http://localhost:3000")
             .WithMethods("GET", "POST", "PUT", "DELETE")
@@ -52,8 +51,9 @@ namespace WebApi.API
                 .UseSqlServer(connectionString));
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddFile("Logs/log-{Date}.log");
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

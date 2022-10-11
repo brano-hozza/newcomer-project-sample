@@ -25,6 +25,14 @@ namespace WebApi.API
                 .CreateDefaultBuilder(args)
                 .ConfigureHostConfiguration(builder => builder.AddConfiguration(configuration))
                 .ConfigureAppConfiguration(builder => builder.AddConfiguration(configuration))
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddConsole();
+                    logging.AddDebug();
+                    logging.AddEventSourceLogger();
+
+                })
                 .UseGrace()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
@@ -32,6 +40,11 @@ namespace WebApi.API
                         .UseKestrel(options => options.AddServerHeader = false)
                         .UseIISIntegration()
                         .UseStartup<Startup>();
+                }).ConfigureLogging(logBuilder =>
+                {
+                    logBuilder.ClearProviders(); // removes all providers from LoggerFactory
+                    logBuilder.AddConsole();
+                    logBuilder.AddTraceSource("Information, ActivityTracing"); // Add Trace listener provider
                 });
     }
 }

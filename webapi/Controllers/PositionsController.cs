@@ -17,7 +17,7 @@ namespace WebApi.Controllers
         private readonly DataContext db;
         private readonly ILogger _logger;
 
-        public PositionsController(DataContext context, ILogger logger)
+        public PositionsController(DataContext context, ILogger<PositionsController> logger)
         {
             db = context;
             this._logger = logger;
@@ -85,7 +85,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
-                _logger.LogError("Trying to delete position with references ID:{Id}", id);
+                _logger.LogError("Unsucesful try to delete position with existing references, ID:{Id}", id);
                 return Conflict();
             }
 

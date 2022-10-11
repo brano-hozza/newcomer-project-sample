@@ -18,7 +18,7 @@ namespace WebApi.Controllers
         private readonly ILogger _logger;
         private readonly IMapper mapper;
 
-        public UsersController(DataContext _db, ILogger logger)
+        public UsersController(DataContext _db, ILogger<UsersController> logger)
         {
             db = _db;
             var config = new MapperConfiguration(cfg =>
