@@ -31,6 +31,8 @@ namespace WebApi.API
             .AddNewtonsoftJson(options => options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc)
             .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+            services.AddLogging();
+
 
             services.AddCors(options => options.AddPolicy(name: "AllowLocalhost", policy => policy
             .WithOrigins("http://localhost:3000")

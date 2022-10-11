@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -14,10 +15,13 @@ namespace WebApi.Controllers
     public class PositionsController : ControllerBase
     {
         private readonly DataContext db;
+        private readonly ILogger _logger;
 
-        public PositionsController(DataContext context)
+        public PositionsController(DataContext context, ILogger logger)
         {
             db = context;
+            this._logger = logger;
+
         }
 
         // GET: api/Positions
@@ -56,6 +60,8 @@ namespace WebApi.Controllers
             db.Positions.Add(position);
             await db.SaveChangesAsync();
 
+            _logger.LogInformation("Created new position {Name}", position.Name);
+
             return CreatedAtAction("GetPosition", new { id = position.Id }, position);
         }
 
@@ -79,6 +85,7 @@ namespace WebApi.Controllers
             }
             catch (Exception)
             {
+                _logger.LogError("Trying to delete position with references ID:{Id}", id);
                 return Conflict();
             }
 

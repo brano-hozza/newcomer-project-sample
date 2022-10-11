@@ -12,6 +12,7 @@ type State = {
 	surname: string;
 	address?: string;
 	birthDate: string;
+	startDate: string;
 	position: number;
 	salary: number;
 };
@@ -23,7 +24,8 @@ export default defineComponent({
 		name: '',
 		surname: '',
 		address: '',
-		birthDate: new Date().toISOString().slice(0, 10),
+		birthDate: new Date('2000-09-22T00:00:00').toISOString().slice(0, 10),
+		startDate: new Date().toISOString().slice(0, 10),
 		position: -1,
 		salary: 0
 	}),
@@ -89,7 +91,7 @@ export default defineComponent({
 				birthDate: this.birthDate,
 				position: this.position,
 				salary: this.salary,
-				startDate: new Date().toISOString().slice(0, 10)
+				startDate: this.startDate
 			};
 			if (this.editing) {
 				user.startDate = this.userDetails?.startDate as string;
@@ -195,6 +197,19 @@ export default defineComponent({
 					v-model="birthDate"
 					class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-2.5"
 					:disabled="!creation && !editing"
+					type="date" />
+			</div>
+			<div class="w-full my-2">
+				<label
+					for="startDate"
+					class="block mb-2 text-lg font-medium text-gray-900">
+					*Datum nastupu:
+				</label>
+				<input
+					id="startDate"
+					v-model="startDate"
+					class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-2.5"
+					:disabled="!creation"
 					type="date" />
 			</div>
 			<div class="w-full my-2">

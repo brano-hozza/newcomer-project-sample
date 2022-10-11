@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using AutoMapper;
 using WebApi.Models;
 
@@ -14,9 +15,10 @@ namespace WebApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly DataContext db;
+        private readonly ILogger _logger;
         private readonly IMapper mapper;
 
-        public UsersController(DataContext _db)
+        public UsersController(DataContext _db, ILogger logger)
         {
             db = _db;
             var config = new MapperConfiguration(cfg =>
@@ -27,6 +29,7 @@ namespace WebApi.Controllers
                 cfg.CreateMap<PositionChange, PositionChangeDTO>().ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.Position.Id));
             });
             mapper = new Mapper(config);
+            _logger = logger;
         }
 
         // GET: api/Users
@@ -122,6 +125,8 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
+            _logger.LogInformation("Updated user with ID:{Id}", user.Id);
+
             return NoContent();
         }
 
@@ -153,6 +158,7 @@ namespace WebApi.Controllers
             // Create position change
             db.PositionChanges.Add(new() { Position = position, User = newUser.Entity, StartDate = dto.StartDate });
             db.SaveChanges();
+            _logger.LogInformation("Created user with ID:{Id}", user.Id);
 
             return CreatedAtAction("GetUser", new { id = newUser.Entity.Id }, dto);
         }
