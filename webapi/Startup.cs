@@ -31,6 +31,9 @@ namespace WebApi.API
             services.AddControllers(options => options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer())))
             .AddNewtonsoftJson(options => options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc)
             .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddSwaggerGen();
+
             services.AddLogging(logging => logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning));
             services.AddCors(options => options.AddPolicy(name: "AllowLocalhost", policy => policy
             .WithOrigins("http://localhost:3000")
@@ -58,6 +61,8 @@ namespace WebApi.API
             app.UseAuthorization();
             app.UseCors("AllowLocalhost");
             app.UseEndpoints(endpoints => endpoints.MapControllers());
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
 
         public void ConfigureContainer(IInjectionScope scope)
