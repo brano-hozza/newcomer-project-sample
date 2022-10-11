@@ -49,6 +49,17 @@ public class DataContext : DbContext
         .HasMany(u => u.PositionChanges)
         .WithOne(pc => pc.Position)
         .OnDelete(DeleteBehavior.SetNull);
+
+        // Data seeding
+
+        modelBuilder.Entity<Position>().HasData(
+            new Position { Id = 1, Name = "Tester" },
+            new Position { Id = 2, Name = "Programátor" },
+            new Position { Id = 3, Name = "Support" },
+            new Position { Id = 4, Name = "Analytik" },
+            new Position { Id = 5, Name = "Obchodník" },
+            new Position { Id = 6, Name = "Iné" }
+        );
     }
     #endregion
 }
