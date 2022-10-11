@@ -24,7 +24,13 @@ export default defineComponent({
 			'positions',
 			'loading',
 			'referenceExists'
-		])
+		]),
+		/**
+		 * Computed property to check if position name is saveable
+		 */
+		canSave() {
+			return this.positionName.length > 0;
+		}
 	},
 	async mounted() {
 		await this.fetchPositions();
@@ -169,7 +175,8 @@ export default defineComponent({
 						Zrusit
 					</button>
 					<button
-						class="bg-blue-500 hover:bg-blue-700 text-white py-1 rounded my-2 w-1/3"
+						class="bg-blue-500 hover:bg-blue-700 text-white py-1 rounded my-2 w-1/3 disabled:bg-blue-100 disabled:text-blue-300 disabled:hover:cursor-not-allowed"
+						:disabled="!canSave"
 						@click="savePosition()">
 						Ulozit
 					</button>

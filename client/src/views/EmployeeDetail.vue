@@ -240,7 +240,7 @@ export default defineComponent({
 			<button
 				v-if="creation || editing"
 				:disabled="!canSave"
-				class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded my-2 w-full disabled:bg-gray-500 disabled:hover:cursor-not-allowed"
+				class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded my-2 w-full disabled:bg-blue-100 disabled:text-blue-300 disabled:hover:cursor-not-allowed"
 				@click="save">
 				Ulozit
 			</button>
