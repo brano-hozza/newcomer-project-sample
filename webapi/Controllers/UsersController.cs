@@ -144,16 +144,14 @@ namespace WebApi.Controllers
                 Name = dto.Name,
                 Surname = dto.Surname,
                 BirthDate = dto.BirthDate,
+                StartDate = dto.StartDate,
                 Position = position,
                 Salary = dto.Salary
             };
-            // Get current time
-            DateTime now = DateTime.Now;
-            user.StartDate = now;
             var newUser = db.Users.Add(user);
 
             // Create position change
-            db.PositionChanges.Add(new() { Position = position, User = newUser.Entity, StartDate = now });
+            db.PositionChanges.Add(new() { Position = position, User = newUser.Entity, StartDate = dto.StartDate });
             db.SaveChanges();
 
             return CreatedAtAction("GetUser", new { id = newUser.Entity.Id }, dto);
