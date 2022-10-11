@@ -50,7 +50,7 @@ namespace WebApi.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("FK_Position")
+                    b.Property<int?>("FK_Position")
                         .HasColumnType("int");
 
                     b.Property<int>("FK_User")
@@ -114,8 +114,7 @@ namespace WebApi.Migrations
                     b.HasOne("WebApi.Models.Position", "Position")
                         .WithMany("PositionChanges")
                         .HasForeignKey("FK_Position")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("WebApi.Models.User", "User")
                         .WithMany("PositionChanges")

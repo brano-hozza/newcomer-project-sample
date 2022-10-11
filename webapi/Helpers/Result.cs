@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 namespace WebApi.Host
 {
     public enum ErrorType
@@ -16,12 +15,12 @@ namespace WebApi.Host
             Exception = exception;
         }
 
-        public ErrorType Type { get; private set; }
-        public Exception Exception { get; private set; }
+        public ErrorType Type { get; }
+        public Exception Exception { get; }
     }
-    public class Result<T>
+    public sealed class Result<T>
     {
-        public bool IsFailed => Errors.Any();
+        public bool IsFailed => Errors.Count > 0;
         public bool IsSuccess => !IsFailed;
 
         public T Value { get; }

@@ -21,7 +21,6 @@ namespace WebApi.Controllers
         {
             db = context;
             this._logger = logger;
-
         }
 
         // GET: api/Positions

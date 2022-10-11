@@ -34,8 +34,7 @@ export const useUsersStore = defineStore('users', {
 			} catch (e) {
 				this.users = [];
 			}
-			setTimeout(() => (this.loading = false), 1000);
-			//this.loading = false;
+			this.loading = false;
 		},
 		/**
 		 * Action to fetch users from the API
@@ -50,8 +49,7 @@ export const useUsersStore = defineStore('users', {
 			} catch (e) {
 				this.users = [];
 			}
-			setTimeout(() => (this.loading = false), 1000);
-			//this.loading = false;
+			this.loading = false;
 		},
 		/**
 		 * Action to fetch user details from the API

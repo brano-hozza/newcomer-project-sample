@@ -15,5 +15,4 @@ namespace WebApi.API
             return Regex.Replace(value!.ToString()!, "([a-z])([A-Z])", "$1-$2").ToLowerInvariant();
         }
     }
-
 }

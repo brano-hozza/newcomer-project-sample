@@ -12,8 +12,8 @@ using WebApi.Models;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221005141537_NextOne")]
-    partial class NextOne
+    [Migration("20221011105759_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,7 +52,7 @@ namespace WebApi.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("FK_Position")
+                    b.Property<int?>("FK_Position")
                         .HasColumnType("int");
 
                     b.Property<int>("FK_User")
@@ -91,8 +91,8 @@ namespace WebApi.Migrations
                     b.Property<int>("PositionId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Resigned")
-                        .HasColumnType("bit");
+                    b.Property<DateTime?>("ResignedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<float>("Salary")
                         .HasColumnType("real");
@@ -116,8 +116,7 @@ namespace WebApi.Migrations
                     b.HasOne("WebApi.Models.Position", "Position")
                         .WithMany("PositionChanges")
                         .HasForeignKey("FK_Position")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("WebApi.Models.User", "User")
                         .WithMany("PositionChanges")

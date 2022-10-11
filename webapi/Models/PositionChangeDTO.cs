@@ -1,7 +1,3 @@
-
-using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System;
 namespace WebApi.Models
 {
@@ -11,6 +7,6 @@ namespace WebApi.Models
 
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public virtual int PositionId { get; set; }
+        public virtual int? PositionId { get; set; }
     }
 }

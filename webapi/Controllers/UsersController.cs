@@ -71,6 +71,8 @@ namespace WebApi.Controllers
                 dto.Id = id;
             }
 
+            _logger.LogInformation("Getting user ID: {id1} by ID : {id2}", dto.Id, id);
+
             return dto ?? (ActionResult<UserDTO>)NotFound();
         }
 
@@ -153,14 +155,14 @@ namespace WebApi.Controllers
                 Position = position,
                 Salary = dto.Salary
             };
-            var newUser = db.Users.Add(user);
+            db.Users.Add(user);
 
             // Create position change
-            db.PositionChanges.Add(new() { Position = position, User = newUser.Entity, StartDate = dto.StartDate });
+            db.PositionChanges.Add(new() { Position = position, User = user, StartDate = dto.StartDate });
             db.SaveChanges();
             _logger.LogInformation("Created user with ID:{Id}", user.Id);
-
-            return CreatedAtAction("GetUser", new { id = newUser.Entity.Id }, dto);
+            dto.Id = user.Id;
+            return CreatedAtAction("GetUser", new { id = user.Id }, dto);
         }
 
         // DELETE: api/Users/5/soft

@@ -31,7 +31,6 @@ namespace WebApi.API
                     logging.AddConsole();
                     logging.AddDebug();
                     logging.AddEventSourceLogger();
-
                 })
                 .UseGrace()
                 .ConfigureWebHostDefaults(webBuilder =>

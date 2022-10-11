@@ -14,8 +14,7 @@ namespace WebApi.Models
         [Required]
         [Key, ForeignKey("FK_User")]
         public virtual User User { get; set; } = null!;
-        [Required]
         [Key, ForeignKey("FK_Position")]
-        public virtual Position Position { get; set; } = null!;
+        public virtual Position? Position { get; set; }
     }
 }
