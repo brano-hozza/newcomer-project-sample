@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace WebApi.Models
 {
+    /**
+    * Position entity model
+    */
     public class Position
     {
         public int Id { get; set; }

@@ -4,6 +4,9 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace WebApi.Models
 {
+    /**
+    * Position change entity model
+    */
     public class PositionChange
     {
         public int Id { get; set; }

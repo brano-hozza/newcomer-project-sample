@@ -1,6 +1,9 @@
 using System;
 namespace WebApi.Models
 {
+    /**
+    * User DTO for easier API manipulation
+    */
     public class UserDTO
     {
         public int Id { get; set; }

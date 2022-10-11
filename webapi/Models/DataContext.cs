@@ -1,7 +1,9 @@
 namespace WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
-
+/**
+* Class for setting up database context with models
+*/
 public class DataContext : DbContext
 {
     public DataContext(DbContextOptions<DataContext> options)
@@ -16,26 +18,33 @@ public class DataContext : DbContext
     #region Required
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Setting up relationships and deleting policy
+
         modelBuilder.Entity<PositionChange>()
         .HasOne(u => u.User)
         .WithMany(b => b.PositionChanges)
         .OnDelete(DeleteBehavior.NoAction);
+
         modelBuilder.Entity<PositionChange>()
         .HasOne(u => u.Position)
         .WithMany(b => b.PositionChanges)
         .OnDelete(DeleteBehavior.NoAction);
+
         modelBuilder.Entity<User>()
         .HasOne(u => u.Position)
         .WithMany(b => b.Users)
         .OnDelete(DeleteBehavior.NoAction);
+
         modelBuilder.Entity<User>()
         .HasMany(u => u.PositionChanges)
         .WithOne(b => b.User)
         .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<Position>()
         .HasMany(u => u.Users)
         .WithOne(b => b.Position)
         .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<Position>()
         .HasMany(u => u.PositionChanges)
         .WithOne(pc => pc.Position)

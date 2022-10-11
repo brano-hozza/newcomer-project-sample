@@ -10,6 +10,9 @@ using WebApi.Models;
 
 namespace WebApi.Controllers
 {
+    /**
+   * Controller to process all position operations
+   */
     [Route("api/[controller]")]
     [ApiController]
     public class PositionsController : ControllerBase
@@ -23,7 +26,8 @@ namespace WebApi.Controllers
             this._logger = logger;
         }
 
-        // GET: api/Positions
+        // GET: api/positions
+        // Return all positions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
         {
@@ -34,21 +38,8 @@ namespace WebApi.Controllers
             return await db.Positions.ToListAsync();
         }
 
-        // GET: api/Positions/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Position>> GetPosition(int id)
-        {
-            if (db.Positions == null)
-            {
-                return NotFound();
-            }
-            var position = await db.Positions.FindAsync(id);
-
-            return position ?? (ActionResult<Position>)NotFound();
-        }
-
-        // POST: api/Positions
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST: api/positions
+        // Create new position
         [HttpPost]
         public async Task<ActionResult<Position>> PostPosition(Position position)
         {
@@ -64,7 +55,8 @@ namespace WebApi.Controllers
             return CreatedAtAction("GetPosition", new { id = position.Id }, position);
         }
 
-        // DELETE: api/Positions/5
+        // DELETE: api/positions/5
+        // Delete position with specified ID
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePosition(int id)
         {
@@ -77,7 +69,7 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-            try
+            try // Handle reference error
             {
                 db.Positions.Remove(position);
                 await db.SaveChangesAsync();

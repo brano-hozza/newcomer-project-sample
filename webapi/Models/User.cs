@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System;
 namespace WebApi.Models
 {
+    /**
+    * User entity model
+    */
     public class User
     {
         public int Id { get; set; }
