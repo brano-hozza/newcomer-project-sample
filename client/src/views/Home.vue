@@ -9,6 +9,7 @@ export default defineComponent({
 	}),
 	computed: {},
 	mounted() {
+		// Map navigation routes to local state property
 		this.routes = this.$router.getRoutes().filter(route => route.meta?.nav);
 	},
 	methods: {

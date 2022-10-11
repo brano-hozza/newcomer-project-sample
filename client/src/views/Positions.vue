@@ -35,29 +35,48 @@ export default defineComponent({
 			'deletePosition',
 			'createPosition'
 		]),
+		/**
+		 * Method to open delete confirmation modal
+		 * @param {number} id - ID of position
+		 */
 		promptDelete(id: number) {
 			this.selectedPosition = this.positions.find(
 				position => position.id === id
 			) as IPosition;
 			this.showDelete = true;
 		},
+		/**
+		 * Method to cancel deletion
+		 */
 		cancelDelete() {
 			this.showDelete = false;
 			delete this.selectedPosition;
 		},
+		/**
+		 * Method to confirm deletion
+		 */
 		async confirmDelete() {
 			await this.deletePosition(this.selectedPosition?.id as number);
 			this.showDelete = false;
 			delete this.selectedPosition;
 		},
+		/**
+		 * Method to open new position modal
+		 */
 		newPosition() {
 			this.showNewPosition = true;
 		},
+		/**
+		 * Method to save new position based on local state
+		 */
 		async savePosition() {
 			this.showNewPosition = false;
 			await this.createPosition(this.positionName);
 			this.positionName = '';
 		},
+		/**
+		 * Method to cancel creation
+		 */
 		cancelCreation() {
 			this.showNewPosition = false;
 			this.positionName = '';

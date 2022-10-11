@@ -21,6 +21,7 @@ export default defineComponent({
 	computed: {
 		...mapState(useUsersStore, ['users', 'loading']),
 		...mapState(usePositionsStore, {
+			//map positions from object to array for easier access
 			positions: state =>
 				state.positions.reduce((acc, val) => {
 					acc[val.id] = val.name;
@@ -34,14 +35,25 @@ export default defineComponent({
 	methods: {
 		...mapActions(useUsersStore, ['fetchOldUsers', 'deleteUser']),
 		...mapActions(usePositionsStore, ['fetchPositions']),
+		/**
+		 * Method to open delete confirmation window
+		 * @param {number} id - ID of user
+		 * @param {string} name - Name of user
+		 */
 		promptDelete(id: number, name: string) {
 			this.selectedUser = { id, name };
 			this.showDelete = true;
 		},
+		/**
+		 * Method to cancel deletion
+		 */
 		cancelDelete() {
 			this.showDelete = false;
 			delete this.selectedUser;
 		},
+		/**
+		 * Method to confirm deletion
+		 */
 		async confirmDelete() {
 			await this.deleteUser(this.selectedUser?.id as number, false);
 			this.showDelete = false;
