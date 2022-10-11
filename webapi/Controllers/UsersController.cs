@@ -65,6 +65,7 @@ namespace WebApi.Controllers
             if (user != null)
             {
                 dto = mapper.Map<UserDTO>(user);
+                dto.Id = id;
             }
 
             return dto ?? (ActionResult<UserDTO>)NotFound();
@@ -138,17 +139,24 @@ namespace WebApi.Controllers
             {
                 return Problem("Position not found.");
             }
-            User user = mapper.Map<User>(dto);
+            User user = new()
+            {
+                Name = dto.Name,
+                Surname = dto.Surname,
+                BirthDate = dto.BirthDate,
+                Position = position,
+                Salary = dto.Salary
+            };
             // Get current time
             DateTime now = DateTime.Now;
             user.StartDate = now;
-            db.Users.Add(user);
+            var newUser = db.Users.Add(user);
 
             // Create position change
-            db.PositionChanges.Add(new() { Position = position, User = user, StartDate = now });
-            await db.SaveChangesAsync();
+            db.PositionChanges.Add(new() { Position = position, User = newUser.Entity, StartDate = now });
+            db.SaveChanges();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, dto);
+            return CreatedAtAction("GetUser", new { id = newUser.Entity.Id }, dto);
         }
 
         // DELETE: api/Users/5/soft

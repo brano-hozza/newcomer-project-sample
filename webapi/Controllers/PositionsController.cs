@@ -13,59 +13,35 @@ namespace WebApi.Controllers
     [ApiController]
     public class PositionsController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly DataContext db;
 
         public PositionsController(DataContext context)
         {
-            _context = context;
+            db = context;
         }
 
         // GET: api/Positions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
         {
-            if (_context.Positions == null)
+            if (db.Positions == null)
             {
                 return NotFound();
             }
-            return await _context.Positions.ToListAsync();
+            return await db.Positions.ToListAsync();
         }
 
         // GET: api/Positions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Position>> GetPosition(int id)
         {
-            if (_context.Positions == null)
+            if (db.Positions == null)
             {
                 return NotFound();
             }
-            var position = await _context.Positions.FindAsync(id);
+            var position = await db.Positions.FindAsync(id);
 
             return position ?? (ActionResult<Position>)NotFound();
-        }
-
-        // PUT: api/Positions/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPosition(int id, Position position)
-        {
-            if (id != position.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(position).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException) when (!PositionExists(id))
-            {
-                return NotFound();
-            }
-
-            return NoContent();
         }
 
         // POST: api/Positions
@@ -73,12 +49,12 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Position>> PostPosition(Position position)
         {
-            if (_context.Positions == null)
+            if (db.Positions == null)
             {
                 return Problem("Entity set 'DataContext.Positions'  is null.");
             }
-            _context.Positions.Add(position);
-            await _context.SaveChangesAsync();
+            db.Positions.Add(position);
+            await db.SaveChangesAsync();
 
             return CreatedAtAction("GetPosition", new { id = position.Id }, position);
         }
@@ -87,19 +63,19 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePosition(int id)
         {
-            if (_context.Positions == null)
+            if (db.Positions == null)
             {
                 return NotFound();
             }
-            var position = await _context.Positions.FindAsync(id);
+            var position = await db.Positions.FindAsync(id);
             if (position == null)
             {
                 return NotFound();
             }
             try
             {
-                _context.Positions.Remove(position);
-                await _context.SaveChangesAsync();
+                db.Positions.Remove(position);
+                await db.SaveChangesAsync();
             }
             catch (Exception)
             {
@@ -107,11 +83,6 @@ namespace WebApi.Controllers
             }
 
             return NoContent();
-        }
-
-        private bool PositionExists(int id)
-        {
-            return (_context.Positions?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

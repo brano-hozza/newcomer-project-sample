@@ -87,19 +87,19 @@ export default defineComponent({
 			@click.self="cancelDelete">
 			<div class="bg-white w-80 h-44 flex justify-evenly flex-col p-4">
 				<h3 class="m-2 text-xl font-bold">Vymazanie zaznamu</h3>
-				<p class="m-4">
+				<p class="m-3">
 					Naozaj chcete vymazat zaznam o pouzivatelovi
 					<b>{{ selectedUser?.name }}</b>
 					?
 				</p>
 				<span class="flex justify-evenly mb-3">
 					<button
-						class="bg-gray-500 hover:bg-gray-700 text-white py-1 px-4 rounded"
+						class="bg-gray-500 hover:bg-gray-700 text-white py-1 rounded my-2 w-1/3"
 						@click="cancelDelete">
 						Zrusit
 					</button>
 					<button
-						class="bg-red-700 hover:bg-red-700 text-white py-1 px-4 rounded"
+						class="bg-red-700 hover:bg-red-700 text-white py-1 rounded my-2 w-1/3"
 						@click="confirmDelete()">
 						Potvrdit
 					</button>

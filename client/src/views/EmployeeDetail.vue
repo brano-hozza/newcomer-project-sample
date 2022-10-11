@@ -30,6 +30,9 @@ export default defineComponent({
 	computed: {
 		...mapState(useUsersStore, ['loading', 'userDetails', 'history']),
 		...mapState(usePositionsStore, ['positions']),
+		/**
+		 * Computed property to check if user can be saved
+		 */
 		canSave() {
 			return (
 				this.name.length > 0 &&
@@ -44,6 +47,7 @@ export default defineComponent({
 		this.editing = this.$route.meta.edit as boolean;
 		this.creation = this.$route.meta.new as boolean;
 		await this.fetchPositions();
+		// if we are not creating new user, fetch already existing data and history
 		if (!this.creation) {
 			await this.fetchUserDetails(Number(this.$route.params.id));
 			await this.fetchUserHistory(Number(this.$route.params.id));
@@ -66,9 +70,16 @@ export default defineComponent({
 			'updateUser'
 		]),
 		...mapActions(usePositionsStore, ['fetchPositions']),
+		/**
+		 * Method to change current user position
+		 * @param {Event} e - event from selection HTML element
+		 */
 		changePosition(e: Event) {
 			this.position = Number((e.target as HTMLInputElement).value);
 		},
+		/**
+		 * Method to save current user based on component state
+		 */
 		save() {
 			const user: IUser = {
 				id: (this.userDetails?.id as number) ?? 0,

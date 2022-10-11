@@ -105,19 +105,19 @@ export default defineComponent({
 			@click.self="cancelDelete">
 			<div class="bg-white w-80 h-44 flex justify-evenly flex-col p-4">
 				<h3 class="m-2 text-xl font-bold">Vymazanie zaznamu</h3>
-				<p class="m-4">
+				<p class="m-3">
 					Naozaj chcete vymazat poziciu
 					<b>{{ selectedPosition?.name }}</b>
 					?
 				</p>
 				<span class="flex justify-evenly mb-3">
 					<button
-						class="bg-gray-500 hover:bg-gray-700 text-white py-1 px-4 rounded"
+						class="bg-gray-500 hover:bg-gray-700 text-white py-1 rounded my-2 w-1/3"
 						@click="cancelDelete">
 						Zrusit
 					</button>
 					<button
-						class="bg-red-700 hover:bg-red-700 text-white py-1 px-4 rounded"
+						class="bg-red-700 hover:bg-red-700 text-white py-1 rounded my-2 w-1/3"
 						@click="confirmDelete()">
 						Potvrdit
 					</button>
@@ -129,9 +129,9 @@ export default defineComponent({
 			v-if="showNewPosition"
 			class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-700 opacity-75 flex flex-col items-center justify-center"
 			@click.self="cancelCreation">
-			<div class="bg-white w-80 h-44 flex justify-evenly flex-col p-4">
+			<div class="bg-white w-80 flex justify-evenly flex-col p-2">
 				<h3 class="m-2 text-xl font-bold">Nova pozicia</h3>
-				<div class="w-full my-2">
+				<div class="w-full m-2">
 					<label
 						for="name"
 						class="block mb-2 text-lg font-medium text-gray-900">
@@ -145,12 +145,12 @@ export default defineComponent({
 				</div>
 				<span class="flex justify-evenly mb-3">
 					<button
-						class="bg-gray-500 hover:bg-gray-700 text-white py-1 px-4 rounded"
+						class="bg-gray-500 hover:bg-gray-700 text-white py-1 rounded my-2 w-1/3"
 						@click="cancelCreation">
 						Zrusit
 					</button>
 					<button
-						class="bg-red-700 hover:bg-red-700 text-white py-1 px-4 rounded"
+						class="bg-blue-500 hover:bg-blue-700 text-white py-1 rounded my-2 w-1/3"
 						@click="savePosition()">
 						Ulozit
 					</button>

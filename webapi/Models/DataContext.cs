@@ -39,7 +39,7 @@ public class DataContext : DbContext
         modelBuilder.Entity<Position>()
         .HasMany(u => u.PositionChanges)
         .WithOne(pc => pc.Position)
-        .OnDelete(DeleteBehavior.Restrict);
+        .OnDelete(DeleteBehavior.SetNull);
     }
     #endregion
 }

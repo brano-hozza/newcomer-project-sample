@@ -28,17 +28,33 @@ export default defineComponent({
 	methods: {
 		...mapActions(useUsersStore, ['fetchUsers', 'deleteUser']),
 		...mapActions(usePositionsStore, ['fetchPositions']),
+		/**
+		 * Method to change route to user editor
+		 * @param {number} id - ID of user
+		 *  */
 		editUser(id: number) {
 			this.$router.push({ name: 'Details edit', params: { id } });
 		},
+		/**
+		 * Method to open delete confirmation window
+		 * @param {number} id - ID of user
+		 * @param {string} name - Name of user
+		 */
 		promptDelete(id: number, name: string) {
 			this.selectedUser = { id, name };
 			this.showDelete = true;
 		},
+		/**
+		 * Method to cancel deletion
+		 */
 		cancelDelete() {
 			this.showDelete = false;
 			delete this.selectedUser;
 		},
+		/**
+		 * Method to confirm deletion
+		 * @param {boolean?} [soft] - true if should be soft delete
+		 */
 		async confirmDelete(soft = false) {
 			await this.deleteUser(this.selectedUser?.id as number, soft);
 			this.showDelete = false;
@@ -93,24 +109,24 @@ export default defineComponent({
 			<div class="bg-white w-80 h-44 flex justify-evenly flex-col p-4">
 				<h3 class="m-2 text-xl font-bold">Vymazanie zaznamu</h3>
 
-				<p class="m-4">
+				<p class="m-3">
 					Naozaj chcete vymazat zaznam o pouzivatelovi
 					<b>{{ selectedUser?.name }}</b>
 					?
 				</p>
 				<span class="flex justify-evenly mb-3">
 					<button
-						class="bg-gray-500 hover:bg-gray-700 text-white py-1 px-4 rounded"
+						class="bg-gray-500 hover:bg-gray-700 text-white py-1 rounded my-2 w-1/4"
 						@click="cancelDelete">
 						Zrusit
 					</button>
 					<button
-						class="bg-yellow-500 hover:bg-yellow-700 text-black py-1 px-4 rounded"
+						class="bg-yellow-500 hover:bg-yellow-700 text-black py-1 rounded my-2 w-1/3"
 						@click="confirmDelete(true)">
 						Archivovat
 					</button>
 					<button
-						class="bg-red-700 hover:bg-red-700 text-white py-1 px-4 rounded"
+						class="bg-red-700 hover:bg-red-700 text-white py-1 rounded my-2 w-1/4"
 						@click="confirmDelete()">
 						Potvrdit
 					</button>
