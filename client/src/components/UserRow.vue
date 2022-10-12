@@ -2,8 +2,8 @@
 import { mapState } from 'pinia';
 import { defineComponent, PropType } from 'vue';
 
-import { usePositionsStore } from '../store/positions';
-import { IUser } from '../types/user';
+import { usePositionsStore } from '@/store/positions';
+import { IUser } from '@/types/user';
 
 type ChangedPositions = {
 	[key: number]: string;

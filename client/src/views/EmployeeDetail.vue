@@ -2,10 +2,10 @@
 import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
-import CalendarComponent from '../components/CalendarComponent.vue';
-import { usePositionsStore } from '../store/positions';
-import { useUsersStore } from '../store/users';
-import { IUser } from '../types/user';
+import CalendarComponent from '@/components/CalendarComponent.vue';
+import { usePositionsStore } from '@/store/positions';
+import { useUsersStore } from '@/store/users';
+import { IUser } from '@/types/user';
 type State = {
 	editing?: boolean;
 	creation?: boolean;

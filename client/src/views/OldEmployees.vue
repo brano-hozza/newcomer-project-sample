@@ -2,9 +2,9 @@
 import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
-import UserRow from '../components/UserRow.vue';
-import { usePositionsStore } from '../store/positions';
-import { useUsersStore } from '../store/users';
+import UserRow from '@/components/UserRow.vue';
+import { usePositionsStore } from '@/store/positions';
+import { useUsersStore } from '@/store/users';
 type State = {
 	selectedUser?: {
 		id: number;

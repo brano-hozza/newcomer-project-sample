@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
-import { apiCall } from '../helpers/api';
-import { IPosition } from '../types/position';
+import { apiCall } from '@/helpers/api';
+import { IPosition } from '@/types/position';
 
 type TPositionState = {
 	positions: IPosition[];

@@ -2,9 +2,9 @@
 import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
-import PositionRow from '../components/PositionRow.vue';
-import { usePositionsStore } from '../store/positions';
-import { IPosition } from '../types/position';
+import PositionRow from '@/components/PositionRow.vue';
+import { usePositionsStore } from '@/store/positions';
+import { IPosition } from '@/types/position';
 type State = {
 	selectedPosition?: IPosition;
 	showDelete: boolean;

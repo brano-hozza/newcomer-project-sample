@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
-import { apiCall } from '../helpers/api';
-import type { IUser } from '../types/user';
+import { apiCall } from '@/helpers/api';
+import type { IUser } from '@/types/user';
 
 type TUserState = {
 	users: IUser[];

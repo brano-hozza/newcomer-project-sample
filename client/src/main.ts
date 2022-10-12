@@ -1,11 +1,11 @@
-import './styles/index.scss';
+import '@/styles/index.scss';
 
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
-import App from './App.vue';
-import { routes } from './routes';
+import App from '@/App.vue';
+import { routes } from '@/routes';
 createApp(App)
 	.use(createPinia())
 	.use(

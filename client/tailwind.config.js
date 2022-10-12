@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-//eslint-disable no-undef
+// eslint-disable-next-line no-undef
 module.exports = {
 	content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,vue}'],
 	theme: {
