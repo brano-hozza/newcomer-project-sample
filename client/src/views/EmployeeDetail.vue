@@ -39,8 +39,8 @@ export default defineComponent({
 		 */
 		canSave() {
 			return (
-				this.name.length > 0 &&
-				this.surname.length > 0 &&
+				this.name.length > 3 &&
+				this.surname.length > 3 &&
 				new Date(this.birthDate).getTime() < Date.now() &&
 				this.position > -1 &&
 				this.salary > 0
@@ -161,6 +161,7 @@ export default defineComponent({
 					:disabled="!creation && !editing"
 					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 					placeholder="Meno zamestnanca..." />
+					 <p v-if="name.length < 3" class="text-red-500">Meno musí mať aspoň 3 znaky</p>
 			</div>
 			<div class="w-full my-2">
 				<label
@@ -174,6 +175,7 @@ export default defineComponent({
 					:disabled="!creation && !editing"
 					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 					placeholder="Priezvisko zamestnanca..." />
+					 <p v-if="surname.length < 3" class="text-red-500">Priezvisko musí mať aspoň 3 znaky</p>
 			</div>
 			<div class="w-full my-2">
 				<label
@@ -235,6 +237,8 @@ export default defineComponent({
 						{{ _position.name }}
 					</option>
 				</select>
+					
+					<p v-if="position < 0" class="text-red-500">Vyberte pozíciu</p>
 			</div>
 			<div class="w-full my-2">
 				<label
@@ -250,6 +254,8 @@ export default defineComponent({
 					min="0"
 					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 					placeholder="Plat zamestnanca..." />
+					
+					<p v-if="salary < 1" class="text-red-500">Je potrebné zadať plat</p>
 			</div>
 			<i class="text-gray-300">Povinné údaje sú označené hviezdičkou</i>
 			<button
