@@ -2,6 +2,7 @@
 import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
+import CalendarComponent from '../components/CalendarComponent.vue';
 import { usePositionsStore } from '../store/positions';
 import { useUsersStore } from '../store/users';
 import { IUser } from '../types/user';
@@ -18,6 +19,7 @@ type State = {
 };
 export default defineComponent({
 	name: 'EmployeeDetail',
+	components: { CalendarComponent },
 	data: (): State => ({
 		editing: false,
 		creation: false,
@@ -192,12 +194,11 @@ export default defineComponent({
 					class="block mb-2 text-lg font-medium text-gray-900">
 					*Dátum narodenia:
 				</label>
-				<input
+				<CalendarComponent
 					id="birthDate"
 					v-model="birthDate"
-					class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-2.5"
 					:disabled="!creation && !editing"
-					type="date" />
+					:checks="[(val:string) => (new Date(val).getTime() > Date.now()) && 'Neplatny datum']" />
 			</div>
 			<div class="w-full my-2">
 				<label
@@ -205,12 +206,11 @@ export default defineComponent({
 					class="block mb-2 text-lg font-medium text-gray-900">
 					*Dátum nástupu:
 				</label>
-				<input
+
+				<CalendarComponent
 					id="startDate"
 					v-model="startDate"
-					class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-2.5"
-					:disabled="!creation"
-					type="date" />
+					:disabled="!creation" />
 			</div>
 			<div class="w-full my-2">
 				<label

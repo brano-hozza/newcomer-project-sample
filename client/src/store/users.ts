@@ -29,7 +29,9 @@ export const useUsersStore = defineStore('users', {
 		async fetchUsers() {
 			this.loading = true;
 			try {
-				const response = await fetch('http://localhost:5000/api/users');
+				const response = await fetch(
+					`${import.meta.env.VITE_API_URL}/api/users`
+				);
 				this.users = await response.json();
 			} catch (e) {
 				this.users = [];
@@ -43,7 +45,7 @@ export const useUsersStore = defineStore('users', {
 			this.loading = true;
 			try {
 				const response = await fetch(
-					'http://localhost:5000/api/users/old'
+					`${import.meta.env.VITE_API_URL}/api/users/old`
 				);
 				this.users = await response.json();
 			} catch (e) {
@@ -59,7 +61,7 @@ export const useUsersStore = defineStore('users', {
 			this.loading = true;
 			try {
 				const response = await fetch(
-					`http://localhost:5000/api/users/${id}`
+					`${import.meta.env.VITE_API_URL}/api/users/${id}`
 				);
 				this.userDetails = await response.json();
 			} catch (e) {
@@ -75,7 +77,7 @@ export const useUsersStore = defineStore('users', {
 			this.loading = true;
 			try {
 				const response = await fetch(
-					`http://localhost:5000/api/users/${id}/history`
+					`${import.meta.env.VITE_API_URL}/api/users/${id}/history`
 				);
 				this.history = await response.json();
 			} catch (e) {
@@ -91,7 +93,7 @@ export const useUsersStore = defineStore('users', {
 			this.loading = true;
 			try {
 				await fetch(
-					`http://localhost:5000/api/users/${id}${
+					`${import.meta.env.VITE_API_URL}/api/users/${id}${
 						soft ? '/soft' : ''
 					}`,
 					{
@@ -112,13 +114,16 @@ export const useUsersStore = defineStore('users', {
 		async createUser(user: IUser) {
 			this.loading = true;
 			try {
-				const resp = await fetch('http://localhost:5000/api/users', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(user)
-				});
+				const resp = await fetch(
+					`${import.meta.env.VITE_API_URL}/api/users`,
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(user)
+					}
+				);
 				const newUser = (await resp.json()) as IUser;
 				this.users = [...this.users, newUser];
 			} catch (e) {
@@ -134,13 +139,16 @@ export const useUsersStore = defineStore('users', {
 		async updateUser(user: IUser) {
 			this.loading = true;
 			try {
-				await fetch(`http://localhost:5000/api/users/${user.id}`, {
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(user)
-				});
+				await fetch(
+					`${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
+					{
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(user)
+					}
+				);
 				this.users = this.users.map(u => (u.id === user.id ? user : u));
 			} catch (e) {
 				//eslint-disable-next-line no-console

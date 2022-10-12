@@ -22,7 +22,7 @@ export const usePositionsStore = defineStore('positions', {
 			this.loading = true;
 			try {
 				const response = await fetch(
-					'http://localhost:5000/api/positions'
+					`${import.meta.env.VITE_API_URL}/api/positions`
 				);
 				this.positions = await response.json();
 			} catch (e) {
@@ -38,7 +38,7 @@ export const usePositionsStore = defineStore('positions', {
 			this.loading = true;
 			try {
 				const resp = await fetch(
-					`http://localhost:5000/api/positions/${id}`,
+					`${import.meta.env.VITE_API_URL}/api/positions/${id}`,
 					{
 						method: 'DELETE'
 					}
@@ -67,7 +67,7 @@ export const usePositionsStore = defineStore('positions', {
 			this.loading = true;
 			try {
 				const resp = await fetch(
-					'http://localhost:5000/api/positions',
+					`${import.meta.env.VITE_API_URL}/api/positions`,
 					{
 						method: 'POST',
 						headers: {
