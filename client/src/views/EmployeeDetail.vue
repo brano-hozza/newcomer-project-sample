@@ -135,7 +135,7 @@ export default defineComponent({
 							<td class="border px-4 py-2">
 								{{
 									positions.find(p => p.id == item.positionId)
-										?.name
+										?.name ?? '<zmazané>'
 								}}
 							</td>
 							<td class="border px-4 py-2">

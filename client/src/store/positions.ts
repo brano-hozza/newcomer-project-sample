@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 
+import { apiCall } from '../helpers/api';
 import { IPosition } from '../types/position';
 
 type TPositionState = {
@@ -21,9 +22,7 @@ export const usePositionsStore = defineStore('positions', {
 		async fetchPositions() {
 			this.loading = true;
 			try {
-				const response = await fetch(
-					`${import.meta.env.VITE_API_URL}/api/positions`
-				);
+				const response = await apiCall('/api/positions');
 				this.positions = await response.json();
 			} catch (e) {
 				this.positions = [];
@@ -37,12 +36,9 @@ export const usePositionsStore = defineStore('positions', {
 		async deletePosition(id: number) {
 			this.loading = true;
 			try {
-				const resp = await fetch(
-					`${import.meta.env.VITE_API_URL}/api/positions/${id}`,
-					{
-						method: 'DELETE'
-					}
-				);
+				const resp = await apiCall(`/api/positions/${id}`, {
+					method: 'DELETE'
+				});
 				if (resp.status === 204) {
 					this.positions = this.positions.filter(
 						position => position.id !== id
@@ -66,18 +62,15 @@ export const usePositionsStore = defineStore('positions', {
 		async createPosition(name: string) {
 			this.loading = true;
 			try {
-				const resp = await fetch(
-					`${import.meta.env.VITE_API_URL}/api/positions`,
-					{
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify({
-							name
-						})
-					}
-				);
+				const resp = await apiCall('/api/positions', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						name
+					})
+				});
 				const position = await resp.json();
 				this.positions.push(position);
 			} catch (e) {

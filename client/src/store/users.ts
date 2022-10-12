@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 
+import { apiCall } from '../helpers/api';
 import type { IUser } from '../types/user';
 
 type TUserState = {
@@ -29,9 +30,7 @@ export const useUsersStore = defineStore('users', {
 		async fetchUsers() {
 			this.loading = true;
 			try {
-				const response = await fetch(
-					`${import.meta.env.VITE_API_URL}/api/users`
-				);
+				const response = await apiCall('/api/users');
 				this.users = await response.json();
 			} catch (e) {
 				this.users = [];
@@ -44,9 +43,7 @@ export const useUsersStore = defineStore('users', {
 		async fetchOldUsers() {
 			this.loading = true;
 			try {
-				const response = await fetch(
-					`${import.meta.env.VITE_API_URL}/api/users/old`
-				);
+				const response = await apiCall('/api/users/old');
 				this.users = await response.json();
 			} catch (e) {
 				this.users = [];
@@ -60,9 +57,7 @@ export const useUsersStore = defineStore('users', {
 		async fetchUserDetails(id: number) {
 			this.loading = true;
 			try {
-				const response = await fetch(
-					`${import.meta.env.VITE_API_URL}/api/users/${id}`
-				);
+				const response = await apiCall(`/api/users/${id}`);
 				this.userDetails = await response.json();
 			} catch (e) {
 				this.userDetails = null;
@@ -76,9 +71,7 @@ export const useUsersStore = defineStore('users', {
 		async fetchUserHistory(id: number) {
 			this.loading = true;
 			try {
-				const response = await fetch(
-					`${import.meta.env.VITE_API_URL}/api/users/${id}/history`
-				);
+				const response = await apiCall(`/api/users/${id}/history`);
 				this.history = await response.json();
 			} catch (e) {
 				this.history = [];
@@ -92,14 +85,9 @@ export const useUsersStore = defineStore('users', {
 		async deleteUser(id: number, soft: boolean) {
 			this.loading = true;
 			try {
-				await fetch(
-					`${import.meta.env.VITE_API_URL}/api/users/${id}${
-						soft ? '/soft' : ''
-					}`,
-					{
-						method: 'DELETE'
-					}
-				);
+				await apiCall(`/api/users/${id}${soft ? '/soft' : ''}`, {
+					method: 'DELETE'
+				});
 				this.users = this.users.filter(user => user.id !== id);
 			} catch (e) {
 				//eslint-disable-next-line no-console
@@ -114,16 +102,13 @@ export const useUsersStore = defineStore('users', {
 		async createUser(user: IUser) {
 			this.loading = true;
 			try {
-				const resp = await fetch(
-					`${import.meta.env.VITE_API_URL}/api/users`,
-					{
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify(user)
-					}
-				);
+				const resp = await apiCall('/api/users', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(user)
+				});
 				const newUser = (await resp.json()) as IUser;
 				this.users = [...this.users, newUser];
 			} catch (e) {
@@ -139,16 +124,13 @@ export const useUsersStore = defineStore('users', {
 		async updateUser(user: IUser) {
 			this.loading = true;
 			try {
-				await fetch(
-					`${import.meta.env.VITE_API_URL}/api/users/${user.id}`,
-					{
-						method: 'PUT',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify(user)
-					}
-				);
+				await apiCall(`/api/users/${user.id}`, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(user)
+				});
 				this.users = this.users.map(u => (u.id === user.id ? user : u));
 			} catch (e) {
 				//eslint-disable-next-line no-console
