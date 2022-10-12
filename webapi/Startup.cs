@@ -1,4 +1,7 @@
 using System.Data;
+using AutoMapper;
+using Grace.AspNetCore.MVC;
+using Grace.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Data.SqlClient;
@@ -7,10 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Grace.AspNetCore.MVC;
-using Grace.DependencyInjection;
 using WebApi.Models;
-using AutoMapper;
 
 namespace WebApi.API
 {
