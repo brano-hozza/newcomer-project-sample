@@ -1,3 +1,6 @@
 appsettings.*
 Logs
 Logs/*
+
+.idea
+.idea/*

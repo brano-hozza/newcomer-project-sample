@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using WebApi.Helpers;
 
-using WebApi.Host;
-
-namespace WebApi.API
+namespace WebApi
 {
     public static class Program
     {
@@ -17,11 +16,11 @@ namespace WebApi.API
         private static Result<IConfigurationRoot> BuildConfiguration() =>
                 Result<IConfigurationRoot>.Ok(
                     new ConfigurationBuilder()
-                        .AddAppSettingsJSON()
+                        .AddAppSettingsJson()
                         .Build());
 
         private static IHostBuilder CreateHostBuilder(IConfigurationRoot configuration, string[] args) =>
-            Microsoft.Extensions.Hosting.Host
+            Host
                 .CreateDefaultBuilder(args)
                 .ConfigureHostConfiguration(builder => builder.AddConfiguration(configuration))
                 .ConfigureAppConfiguration(builder => builder.AddConfiguration(configuration))

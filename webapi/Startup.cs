@@ -1,5 +1,4 @@
 using System.Data;
-using AutoMapper;
 using Grace.AspNetCore.MVC;
 using Grace.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
@@ -8,21 +7,19 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using WebApi.Helpers;
 using WebApi.Models;
 
-namespace WebApi.API
+namespace WebApi
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
-        public IHostEnvironment HostingEnvironment { get; }
+        private IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration, IHostEnvironment environment)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            HostingEnvironment = environment;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -45,8 +42,10 @@ namespace WebApi.API
             services.AddTransient<IDbConnection>(_ =>
                 {
                     var connection = SqlClientFactory.Instance.CreateConnection();
+                    if (connection == null) return null!;
                     connection.ConnectionString = connectionString;
                     return connection;
+
                 });
 
             services.AddDbContextPool<DataContext>(options => options

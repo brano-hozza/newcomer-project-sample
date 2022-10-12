@@ -1,6 +1,6 @@
 namespace WebApi.Models;
 using Microsoft.EntityFrameworkCore;
-using WebApi.Models;
+
 /**
 * Class for setting up database context with models
 */

@@ -17,22 +17,22 @@ namespace WebApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly DataContext db;
+        private readonly DataContext _db;
         private readonly ILogger _logger;
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
 
-        public UsersController(DataContext _db, ILogger<UsersController> logger)
+        public UsersController(DataContext db, ILogger<UsersController> logger)
         {
-            db = _db;
+            this._db = db;
             // Configure automapper
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<User, UserDTO>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.Position.Id));
-                cfg.CreateMap<UserDTO, User>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => db.Positions.FirstOrDefault(p => p.Id == src.Position)));
+                cfg.CreateMap<UserDTO, User>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => this._db.Positions.FirstOrDefault(p => p.Id == src.Position)));
                 cfg.CreateMap<Position, PositionDTO>();
                 cfg.CreateMap<PositionChange, PositionChangeDTO>().ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.Position!.Id));
             });
-            mapper = new Mapper(config);
+            _mapper = new Mapper(config);
             _logger = logger;
         }
 
@@ -41,12 +41,8 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
-            if (db.Users == null)
-            {
-                return NotFound();
-            }
             // Filter out only users without resignation date
-            return await db.Users.Include(u => u.Position).Where(user => user.ResignedDate == null).Select(user => mapper.Map<UserDTO>(user)).ToArrayAsync();
+            return await _db.Users.Include(u => u.Position).Where(user => user.ResignedDate == null).Select(user => _mapper.Map<UserDTO>(user)).ToArrayAsync();
         }
 
         // GET: api/users/old
@@ -54,12 +50,8 @@ namespace WebApi.Controllers
         [HttpGet("old")]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetOldUsers()
         {
-            if (db.Users == null)
-            {
-                return NotFound();
-            }
             // Filter out only users with resignation date
-            return await db.Users.Include(u => u.Position).Where(user => user.ResignedDate != null).Select(user => mapper.Map<UserDTO>(user)).ToArrayAsync();
+            return await _db.Users.Include(u => u.Position).Where(user => user.ResignedDate != null).Select(user => _mapper.Map<UserDTO>(user)).ToArrayAsync();
         }
 
         // GET: api/users/5
@@ -67,22 +59,18 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> GetUser(int id)
         {
-            if (db.Users == null)
-            {
-                return NotFound();
-            }
             //Include positions with user
-            var user = await db.Users.Include(u => u.Position).Where(u => u.Id == id).FirstOrDefaultAsync();
+            var user = await _db.Users.Include(u => u.Position).Where(u => u.Id == id).FirstOrDefaultAsync();
             UserDTO dto = null!;
             if (user != null)
             {
-                dto = mapper.Map<UserDTO>(user);
+                dto = _mapper.Map<UserDTO>(user);
                 dto.Id = id;
             }
 
             _logger.LogInformation("Getting user ID: {id1} by ID : {id2}", dto.Id, id);
 
-            return dto ?? (ActionResult<UserDTO>)NotFound();
+            return dto;
         }
 
         // PUT: api/users/5
@@ -90,8 +78,8 @@ namespace WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, UserDTO dto)
         {
-            User? user = await db.Users.Include(u => u.Position).Where(u => u.Id == id).FirstOrDefaultAsync();
-            Position? position = await db.Positions.FindAsync(dto.Position);
+            User? user = await _db.Users.Include(u => u.Position).Where(u => u.Id == id).FirstOrDefaultAsync();
+            Position? position = await _db.Positions.FindAsync(dto.Position);
 
             //Check user and position existence
             if (user == null || position == null)
@@ -103,14 +91,14 @@ namespace WebApi.Controllers
             if (user.Position.Id != dto.Position)
             {
                 // Get last position
-                PositionChange? change = db.PositionChanges.Where(pc => pc.User.Id == id).OrderByDescending(pc => pc.StartDate).FirstOrDefault();
+                PositionChange? change = _db.PositionChanges.Where(pc => pc.User.Id == id).OrderByDescending(pc => pc.StartDate).FirstOrDefault();
                 if (change == null)
                 {
                     return BadRequest();
                 }
                 // Set end date
                 change.EndDate = DateTime.Now;
-                db.Entry(change).State = EntityState.Modified;
+                _db.Entry(change).State = EntityState.Modified;
                 // Add new position change
                 PositionChange newChange = new()
                 {
@@ -118,10 +106,10 @@ namespace WebApi.Controllers
                     User = user,
                     Position = position
                 };
-                db.PositionChanges.Add(newChange);
+                _db.PositionChanges.Add(newChange);
             }
             // Update user info
-            db.Entry(user).State = EntityState.Modified;
+            _db.Entry(user).State = EntityState.Modified;
             user.Name = dto.Name;
             user.Surname = dto.Surname;
             user.BirthDate = dto.BirthDate;
@@ -130,7 +118,7 @@ namespace WebApi.Controllers
 
             try
             {
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException) when (!UserExists(id))
             {
@@ -147,11 +135,7 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(UserDTO dto)
         {
-            if (db.Users == null)
-            {
-                return Problem("Entity set 'DataContext.Users'  is null.");
-            }
-            var position = await db.Positions.FindAsync(dto.Position);
+            var position = await _db.Positions.FindAsync(dto.Position);
             // Check position existence
             if (position == null)
             {
@@ -166,11 +150,11 @@ namespace WebApi.Controllers
                 Position = position,
                 Salary = dto.Salary
             };
-            db.Users.Add(user);
+            _db.Users.Add(user);
 
             // Create position change
-            db.PositionChanges.Add(new() { Position = position, User = user, StartDate = dto.StartDate });
-            db.SaveChanges();
+            _db.PositionChanges.Add(new() { Position = position, User = user, StartDate = dto.StartDate });
+            await _db.SaveChangesAsync();
             _logger.LogInformation("Created user with ID:{Id}", user.Id);
             dto.Id = user.Id;
             return CreatedAtAction("GetUser", new { id = user.Id }, dto);
@@ -197,32 +181,28 @@ namespace WebApi.Controllers
         */
         private async Task<IActionResult> DeleteUser(int id, bool soft = false)
         {
-            if (db.Users == null)
-            {
-                return NotFound();
-            }
-            var user = await db.Users.FindAsync(id);
+            var user = await _db.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
             if (soft)
             {
-                user.ResignedDate = System.DateTime.Now;
-                db.Entry(user).State = EntityState.Modified;
+                user.ResignedDate = DateTime.Now;
+                _db.Entry(user).State = EntityState.Modified;
             }
             else
             {
-                db.Users.Remove(user);
+                _db.Users.Remove(user);
             }
-            await db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
             return NoContent();
         }
         // Check for user existence
         private bool UserExists(int id)
         {
-            return (db.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+            return _db.Users.Any(e => e.Id == id);
         }
 
         // GET: api/users/5/history
@@ -230,16 +210,12 @@ namespace WebApi.Controllers
         [HttpGet("{id}/history")]
         public async Task<ActionResult<IEnumerable<PositionChangeDTO>>> GetPositionChanges(int id)
         {
-            if (db.Users == null)
-            {
-                return NotFound();
-            }
-            var user = await db.Users.FindAsync(id);
+            var user = await _db.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
-            return await db.PositionChanges.Include(pc => pc.Position).Where(pc => pc.User.Id == id).Select(pc => mapper.Map<PositionChangeDTO>(pc)).ToArrayAsync();
+            return await _db.PositionChanges.Include(pc => pc.Position).Where(pc => pc.User.Id == id).Select(pc => _mapper.Map<PositionChangeDTO>(pc)).ToArrayAsync();
         }
     }
 }

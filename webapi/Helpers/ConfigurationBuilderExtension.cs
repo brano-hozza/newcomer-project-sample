@@ -1,7 +1,7 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
 
-namespace WebApi.Host
+namespace WebApi.Helpers
 {
     public static class ConfigurationBuilderExtensions
     {
@@ -13,7 +13,7 @@ namespace WebApi.Host
             return configurationBuilder;
         }
 
-        public static IConfigurationBuilder AddAppSettingsJSON(this IConfigurationBuilder configurationBuilder)
+        public static IConfigurationBuilder AddAppSettingsJson(this IConfigurationBuilder configurationBuilder)
         {
             configurationBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 

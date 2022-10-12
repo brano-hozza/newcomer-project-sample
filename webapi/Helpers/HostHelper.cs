@@ -1,17 +1,15 @@
 using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace WebApi.Host;
+namespace WebApi.Helpers;
 public static class HostHelper
 {
-    public static void BuildAndRun(Func<Result<IConfigurationRoot>> BuildConfiguration, Func<IConfigurationRoot, string[], IHostBuilder> CreateHostBuilder, string[] args)
+    public static void BuildAndRun(Func<Result<IConfigurationRoot>> buildConfiguration, Func<IConfigurationRoot, string[], IHostBuilder> createHostBuilder, string[] args)
     {
-        Result<IConfigurationRoot> buildConfigurationResult = BuildConfiguration();
+        Result<IConfigurationRoot> buildConfigurationResult = buildConfiguration();
 
-        var host = CreateHostBuilder(buildConfigurationResult.Value, args).Build();
+        var host = createHostBuilder(buildConfigurationResult.Value, args).Build();
         host.Run();
     }
 }

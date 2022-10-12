@@ -7,7 +7,7 @@ namespace WebApi.Models
     /**
     * Position entity model
     */
-    public class Position
+    public sealed class Position
     {
         public int Id { get; set; }
 
@@ -15,9 +15,9 @@ namespace WebApi.Models
         public string Name { get; set; } = "";
 
         [InverseProperty("Position")]
-        public virtual List<User> Users { get; set; } = new List<User>();
+        public List<User> Users { get; set; } = new List<User>();
 
         [InverseProperty("Position")]
-        public virtual List<PositionChange> PositionChanges { get; set; } = new List<PositionChange>();
+        public List<PositionChange> PositionChanges { get; set; } = new List<PositionChange>();
     }
 }

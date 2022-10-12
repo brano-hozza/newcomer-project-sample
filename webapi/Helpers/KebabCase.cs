@@ -1,8 +1,7 @@
-
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Routing;
 
-namespace WebApi.API
+namespace WebApi.Helpers
 {
     public class KebabCaseParameterTransformer : IOutboundParameterTransformer
     {
@@ -12,7 +11,7 @@ namespace WebApi.API
             {
                 return null;
             }
-            return Regex.Replace(value!.ToString()!, "([a-z])([A-Z])", "$1-$2").ToLowerInvariant();
+            return Regex.Replace(value.ToString()!, "([a-z])([A-Z])", "$1-$2").ToLowerInvariant();
         }
     }
 }

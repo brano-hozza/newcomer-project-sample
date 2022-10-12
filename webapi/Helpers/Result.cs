@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-namespace WebApi.Host
+
+namespace WebApi.Helpers
 {
     public enum ErrorType
     {

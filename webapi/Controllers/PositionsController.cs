@@ -23,16 +23,22 @@ namespace WebApi.Controllers
             db = context;
             this._logger = logger;
         }
+        // GET: api/positions/5
+        // Return position by ID
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Position>> GetPosition(int id)
+        {
+            var position = await db.Positions.FindAsync(id);
+
+            return position ?? (ActionResult<Position>)NotFound();
+        }
+        
 
         // GET: api/positions
         // Return all positions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
         {
-            if (db.Positions == null)
-            {
-                return NotFound();
-            }
             return await db.Positions.ToListAsync();
         }
 
@@ -41,10 +47,6 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Position>> PostPosition(Position position)
         {
-            if (db.Positions == null)
-            {
-                return Problem("Entity set 'DataContext.Positions'  is null.");
-            }
             db.Positions.Add(position);
             await db.SaveChangesAsync();
 
@@ -58,10 +60,6 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePosition(int id)
         {
-            if (db.Positions == null)
-            {
-                return NotFound();
-            }
             var position = await db.Positions.FindAsync(id);
             if (position == null)
             {
