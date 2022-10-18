@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using WebApi.DTOs;
+using WebApi.Helpers;
 using WebApi.Models;
+using WebApi.Services;
 
 namespace WebApi.Controllers
 {
@@ -18,15 +20,13 @@ namespace WebApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly DataContext _db;
         private readonly ILogger _logger;
-        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public UsersController(DataContext db, ILogger<UsersController> logger, IMapper mapper)
+        public UsersController(ILogger<UsersController> logger, IUserService userService)
         {
-            this._db = db;
-            _mapper = mapper;
             _logger = logger;
+            _userService = userService;
         }
 
         // GET: api/users
@@ -34,8 +34,13 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
-            // Filter out only users without resignation date
-            return await _db.Users.Include(u => u.Position).Where(user => user.ResignedDate == null).Select(user => _mapper.Map<UserDTO>(user)).ToArrayAsync();
+            var result = await _userService.GetAll();
+            if (result.IsFailed)
+            {
+                var error = result.Errors[0];
+                return BadRequest(error.Exception.Message);
+            }
+            return result.Value;
         }
 
         // GET: api/users/old
@@ -43,8 +48,13 @@ namespace WebApi.Controllers
         [HttpGet("old")]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetOldUsers()
         {
-            // Filter out only users with resignation date
-            return await _db.Users.Include(u => u.Position).Where(user => user.ResignedDate != null).Select(user => _mapper.Map<UserDTO>(user)).ToArrayAsync();
+            var result = await _userService.GetAllOld();
+            if (result.IsFailed)
+            {
+                var error = result.Errors[0];
+                return BadRequest(error.Exception.Message);
+            }
+            return result.Value;
         }
 
         // GET: api/users/5
@@ -52,18 +62,17 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> GetUser(int id)
         {
-            //Include positions with user
-            var user = await _db.Users.Include(u => u.Position).Where(u => u.Id == id).FirstOrDefaultAsync();
-            UserDTO dto = null!;
-            if (user != null)
+            var result = await _userService.Get(id);
+            if (result.IsFailed)
             {
-                dto = _mapper.Map<UserDTO>(user);
-                dto.Id = id;
+                var error = result.Errors[0];
+                if (error.Type == ErrorType.UserNotFound)
+                {
+                    return NotFound(error.Exception.Message);
+                }
+                return BadRequest(error.Exception.Message);
             }
-
-            _logger.LogInformation("Getting user ID: {id1} by ID : {id2}", dto.Id, id);
-
-            return dto;
+            return result.Value;
         }
 
         // PUT: api/users/5
@@ -71,59 +80,21 @@ namespace WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, UserDTO dto)
         {
-            User? user = await _db.Users.Include(u => u.Position).Where(u => u.Id == id).FirstOrDefaultAsync();
-            Position? position = await _db.Positions.FindAsync(dto.Position);
-
-            //Check user and position existence
-            if (user == null || position == null)
+            if (id != dto.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
-
-            var _u = await _db.Users.Select(u => u).Where(u => u.Id != dto.Id && u.Name == dto.Name && u.Surname == dto.Surname).FirstOrDefaultAsync();
-            if (_u != null)
+            var result = await _userService.Update(id, dto);
+            if (result.IsFailed)
             {
-                return Problem("User already exists.", "User", 403);
-            }
-
-            // Check if position changed
-            if (user.Position.Id != dto.Position)
-            {
-                // Get last position
-                PositionChange? change = _db.PositionChanges.Where(pc => pc.User.Id == id).OrderByDescending(pc => pc.StartDate).FirstOrDefault();
-                if (change == null)
+                var error = result.Errors[0];
+                if (error.Type == ErrorType.UserNotFound)
                 {
-                    return BadRequest();
+                    return NotFound(error.Exception.Message);
                 }
-                // Set end date
-                change.EndDate = DateTime.Now;
-                _db.Entry(change).State = EntityState.Modified;
-                // Add new position change
-                PositionChange newChange = new()
-                {
-                    StartDate = DateTime.Now,
-                    User = user,
-                    Position = position
-                };
-                _db.PositionChanges.Add(newChange);
-            }
-            // Update user info
-            _db.Entry(user).State = EntityState.Modified;
-            user.Position = position;
-            user.Address = dto.Address;
-            user.Salary = dto.Salary;
+                return BadRequest(error.Exception.Message);
 
-            try
-            {
-                await _db.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException) when (!UserExists(id))
-            {
-                return NotFound();
-            }
-
-            _logger.LogInformation("Updated user with ID:{Id}", user.Id);
-
             return NoContent();
         }
 
@@ -132,26 +103,21 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(UserDTO dto)
         {
-            var position = await _db.Positions.FindAsync(dto.Position);
-            // Check position existence
-            if (position == null)
+            var result = await _userService.Create(dto);
+            if (result.IsFailed)
             {
-                return Problem("Position not found.");
+                var error = result.Errors[0];
+                if (error.Type == ErrorType.UserExists)
+                {
+                    return Conflict(error.Exception.Message);
+                }
+                if (error.Type == ErrorType.UserNotFound)
+                {
+                    return NotFound(error.Exception.Message);
+                }
+                return BadRequest(error.Exception.Message);
             }
-            var _u = await _db.Users.Select(u => u).Where(u => u.Name == dto.Name && u.Surname == dto.Surname).FirstOrDefaultAsync();
-            if (_u != null)
-            {
-                return Problem("User already exists.", "User", 403);
-            }
-            var user = new User(position, dto);
-            _db.Users.Add(user);
-
-            // Create position change
-            _db.PositionChanges.Add(new() { Position = position, User = user, StartDate = dto.StartDate });
-            await _db.SaveChangesAsync();
-            _logger.LogInformation("Created user with ID:{Id}", user.Id);
-            dto.Id = user.Id;
-            return CreatedAtAction("GetUser", new { id = user.Id }, dto);
+            return CreatedAtAction("GetUser", new { id = result.Value.Id }, result.Value);
         }
 
         // DELETE: api/users/5/soft
@@ -159,51 +125,34 @@ namespace WebApi.Controllers
         [HttpDelete("{id}/soft")]
         public async Task<IActionResult> SoftDeleteUser(int id)
         {
-            return await DeleteUser(id, true);
+            var result = await _userService.DeleteSoft(id);
+            if (result.IsFailed)
+            {
+                var error = result.Errors[0];
+                if (error.Type == ErrorType.UserNotFound)
+                {
+                    return NotFound(error.Exception.Message);
+                }
+                return BadRequest(error.Exception.Message);
+            }
+            return NoContent();
         }
         // DELETE: api/users/5
         // Hard delete to remove user from DB
         [HttpDelete("{id}")]
         public async Task<IActionResult> NormalDeleteUser(int id)
         {
-            return await DeleteUser(id);
-        }
-
-        /**
-        * Method to delete user
-        * Set soft=true for soft delete
-        */
-        private async Task<IActionResult> DeleteUser(int id, bool soft = false)
-        {
-            var user = await _db.Users.FindAsync(id);
-            if (user == null)
+            var result = await _userService.Delete(id);
+            if (result.IsFailed)
             {
-                return NotFound();
-            }
-            if (soft)
-            {
-
-                var change = await _db.PositionChanges.Where(pc => pc.User.Id == id).OrderByDescending(pc => pc.StartDate).FirstOrDefaultAsync();
-                if (change == null)
+                var error = result.Errors[0];
+                if (error.Type == ErrorType.UserNotFound)
                 {
-                    return BadRequest();
+                    return NotFound(error.Exception.Message);
                 }
-                change.EndDate = DateTime.Now;
-                user.ResignedDate = DateTime.Now;
-                _db.Entry(user).State = EntityState.Modified;
+                return BadRequest(error.Exception.Message);
             }
-            else
-            {
-                _db.Users.Remove(user);
-            }
-            await _db.SaveChangesAsync();
-
             return NoContent();
-        }
-        // Check for user existence
-        private bool UserExists(int id)
-        {
-            return _db.Users.Any(e => e.Id == id);
         }
 
         // GET: api/users/5/history
@@ -211,12 +160,17 @@ namespace WebApi.Controllers
         [HttpGet("{id}/history")]
         public async Task<ActionResult<IEnumerable<PositionChangeDTO>>> GetPositionChanges(int id)
         {
-            var user = await _db.Users.FindAsync(id);
-            if (user == null)
+            var result = await _userService.GetPositionChanges(id);
+            if (result.IsFailed)
             {
-                return NotFound();
+                var error = result.Errors[0];
+                if (error.Type == ErrorType.UserNotFound)
+                {
+                    return NotFound(error.Exception.Message);
+                }
+                return BadRequest(error.Exception.Message);
             }
-            return await _db.PositionChanges.Include(pc => pc.Position).Where(pc => pc.User.Id == id).Select(pc => _mapper.Map<PositionChangeDTO>(pc)).ToArrayAsync();
+            return result.Value;
         }
     }
 }

@@ -19,19 +19,19 @@ namespace WebApi.Services
             _context = context;
             _mapper = mapper;
         }
-        async public Task<Result<Position>> Create(PositionDTO dto)
+        async public Task<Result<PositionDTO>> Create(PositionDTO dto)
         {
             var position = _mapper.Map<Position>(dto);
             _context.Positions.Add(position);
             await _context.SaveChangesAsync();
-            return Result<Position>.Ok(position);
+            return Result<PositionDTO>.Ok(_mapper.Map<PositionDTO>(position));
         }
-        async public Task<Result<Position>> Delete(int id)
+        async public Task<Result<PositionDTO>> Delete(int id)
         {
             var position = _context.Positions.Find(id);
             if (position == null)
             {
-                return Result<Position>.Fail(position!, ErrorType.PositionNotFound, new System.Exception("Position not found"));
+                return Result<PositionDTO>.Fail(null!, ErrorType.PositionNotFound, new System.Exception("Position not found"));
             }
             try // Handle reference error
             {
@@ -40,14 +40,15 @@ namespace WebApi.Services
             }
             catch (Exception)
             {
-                return Result<Position>.Fail(position!, ErrorType.PositionReferenceExists, new System.Exception("Reference error"));
+                return Result<PositionDTO>.Fail(null!, ErrorType.PositionReferenceExists, new System.Exception("Reference error"));
             }
-            return Result<Position>.Ok(position);
+            return Result<PositionDTO>.Ok(_mapper.Map<PositionDTO>(position));
         }
-        async public Task<Result<List<Position>>> GetAll()
+        async public Task<Result<List<PositionDTO>>> GetAll()
         {
             var positions = await _context.Positions.ToListAsync();
-            return Result<List<Position>>.Ok(positions);
+            return Result<List<PositionDTO>>.Ok(_mapper.Map<List<PositionDTO>>(positions));
         }
+
     }
 }

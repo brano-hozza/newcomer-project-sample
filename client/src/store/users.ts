@@ -126,7 +126,7 @@ export const useUsersStore = defineStore('users', {
 					body: JSON.stringify(user)
 				});
 				
-				if (resp.status === 403) {
+				if (resp.status === 409) {
 					this.userExists = 'Používateľ s týmto menom už existuje';
 					setTimeout(() => {
 						this.userExists = null;
@@ -147,21 +147,13 @@ export const useUsersStore = defineStore('users', {
 		async updateUser(user: IUser) {
 			this.loading = true;
 			try {
-				const resp = await apiCall(`/api/users/${user.id}`, {
+				 await apiCall(`/api/users/${user.id}`, {
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(user)
 				});
-				
-				if (resp.status === 403) {
-					this.userExists = 'Používateľ s týmto menom už existuje';
-					setTimeout(() => {
-						this.userExists = null;
-					}, 4000);
-					throw new Error('User already exists');
-				}
 				this.users = this.users.map(u => (u.id === user.id ? user : u));
 			} catch (e) {
 				this.setNetworkError();

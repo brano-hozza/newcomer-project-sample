@@ -8,8 +8,8 @@ namespace WebApi.Services
 {
     public interface IPositionService
     {
-        Task<Result<Position>> Create(PositionDTO dto);
-        Task<Result<Position>> Delete(int id);
-        Task<Result<List<Position>>> GetAll();
+        Task<Result<PositionDTO>> Create(PositionDTO dto);
+        Task<Result<PositionDTO>> Delete(int id);
+        Task<Result<List<PositionDTO>>> GetAll();
     }
 }

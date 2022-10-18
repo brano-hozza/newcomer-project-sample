@@ -7,8 +7,11 @@ namespace WebApi.Helpers
     {
         AuthSettingsValidationFailed,
         UserNotFound,
+        UserExists,
         PositionNotFound,
         PositionReferenceExists,
+        PositionChangeNotFound,
+        DbError
     }
     public class Error
     {

@@ -30,12 +30,13 @@ namespace WebApi.Controllers
         // GET: api/positions
         // Return all positions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
+        public async Task<ActionResult<IEnumerable<PositionDTO>>> GetPositions()
         {
             var result = await _positionService.GetAll();
             if (result.IsFailed)
             {
-                return BadRequest(result);
+                var error = result.Errors[0];
+                return BadRequest(error.Exception.Message);
             }
             return result.Value;
         }
@@ -43,13 +44,14 @@ namespace WebApi.Controllers
         // POST: api/positions
         // Create new position
         [HttpPost]
-        public async Task<ActionResult<Position>> PostPosition(PositionDTO position)
+        public async Task<ActionResult<PositionDTO>> PostPosition(PositionDTO position)
         {
             _logger.LogInformation("Creating new position", position.Name);
             var result = await _positionService.Create(position);
             if (result.IsFailed)
             {
-                return BadRequest(result);
+                var error = result.Errors[0];
+                return BadRequest(error.Exception.Message);
             }
             _logger.LogInformation("Created new position {Name}", position.Name);
 
@@ -64,16 +66,12 @@ namespace WebApi.Controllers
             var result = await _positionService.Delete(id);
             if (result.IsFailed)
             {
-                if (result.Errors.Find(e => e.Type == ErrorType.PositionNotFound) != null)
+                var error = result.Errors[0];
+                if (error.Type == ErrorType.PositionNotFound)
                 {
-                    return NotFound(result);
+                    return NotFound(error.Exception.Message);
                 }
-                else if (result.Errors.Find(e => e.Type == ErrorType.PositionReferenceExists) != null)
-                {
-                    _logger.LogError("Unsucesful try to delete position with existing references, ID:{Id}", id);
-                    return Conflict();
-                }
-                return BadRequest(result);
+                return BadRequest(error.Exception.Message);
             }
             return NoContent();
         }
