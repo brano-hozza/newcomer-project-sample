@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebApi.DTOs;
+
 namespace WebApi.Models
 {
     /**
@@ -19,5 +21,12 @@ namespace WebApi.Models
 
         [InverseProperty("Position")]
         public List<PositionChange> PositionChanges { get; set; } = new List<PositionChange>();
+
+        public Position() { }
+
+        public Position(PositionDTO dto)
+        {
+            this.Name = dto.Name;
+        }
     }
 }

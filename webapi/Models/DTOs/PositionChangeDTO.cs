@@ -1,5 +1,5 @@
 using System;
-namespace WebApi.Models
+namespace WebApi.DTOs
 {
     /**
     * Position change DTO for easier API manipulation
@@ -10,6 +10,8 @@ namespace WebApi.Models
 
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public virtual int? PositionId { get; set; }
+        public int? PositionId { get; set; }
+
+        public PositionChangeDTO() { }
     }
 }

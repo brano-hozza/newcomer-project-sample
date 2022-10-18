@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using WebApi.DTOs;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -21,18 +22,10 @@ namespace WebApi.Controllers
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
 
-        public UsersController(DataContext db, ILogger<UsersController> logger)
+        public UsersController(DataContext db, ILogger<UsersController> logger, IMapper mapper)
         {
             this._db = db;
-            // Configure automapper
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<User, UserDTO>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.Position.Id));
-                cfg.CreateMap<UserDTO, User>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => this._db.Positions.FirstOrDefault(p => p.Id == src.Position)));
-                cfg.CreateMap<Position, PositionDTO>();
-                cfg.CreateMap<PositionChange, PositionChangeDTO>().ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.Position!.Id));
-            });
-            _mapper = new Mapper(config);
+            _mapper = mapper;
             _logger = logger;
         }
 
@@ -150,15 +143,7 @@ namespace WebApi.Controllers
             {
                 return Problem("User already exists.", "User", 403);
             }
-            User user = new()
-            {
-                Name = dto.Name,
-                Surname = dto.Surname,
-                BirthDate = dto.BirthDate,
-                StartDate = dto.StartDate,
-                Position = position,
-                Salary = dto.Salary
-            };
+            var user = new User(position, dto);
             _db.Users.Add(user);
 
             // Create position change

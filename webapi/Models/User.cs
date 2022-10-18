@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebApi.DTOs;
+
 namespace WebApi.Models
 {
     /**
@@ -13,10 +15,10 @@ namespace WebApi.Models
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; } = "";
+        public string Name { get; set; }
 
         [Required]
-        public string Surname { get; set; } = "";
+        public string Surname { get; set; }
 
         public string? Address { get; set; }
 
@@ -31,9 +33,21 @@ namespace WebApi.Models
 
         public DateTime? ResignedDate { get; set; }
         // References
-        public virtual Position Position { get; set; } = null!;
-
+        public Position Position { get; set; }
+        public int PositionId { get; set; }
         [InverseProperty("User")]
-        public virtual List<PositionChange> PositionChanges { get; set; } = new List<PositionChange>();
+        public List<PositionChange> PositionChanges { get; set; } = new List<PositionChange>();
+
+        public User() { }
+        public User(Position position, UserDTO dto)
+        {
+            this.Position = position;
+            this.PositionId = position.Id;
+            this.Name = dto.Name;
+            this.Surname = dto.Surname;
+            this.BirthDate = dto.BirthDate;
+            this.StartDate = dto.StartDate;
+            this.Salary = dto.Salary;
+        }
     }
 }

@@ -8,8 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using WebApi.DTOs;
 using WebApi.Helpers;
 using WebApi.Models;
+using WebApi.Services;
 
 namespace WebApi
 {
@@ -28,6 +30,14 @@ namespace WebApi
             services.AddControllers(options => options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer())))
             .AddNewtonsoftJson(options => options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc)
             .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.CreateMap<User, UserDTO>().ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.Position.Id));
+                cfg.CreateMap<UserDTO, User>().ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.Position));
+                cfg.CreateMap<Position, PositionDTO>();
+                cfg.CreateMap<PositionChange, PositionChangeDTO>().ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.Position!.Id));
+            });
 
             services.AddSwaggerGen();
 
@@ -50,6 +60,9 @@ namespace WebApi
 
             services.AddDbContextPool<DataContext>(options => options
                 .UseSqlServer(connectionString));
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPositionService, PositionService>();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)

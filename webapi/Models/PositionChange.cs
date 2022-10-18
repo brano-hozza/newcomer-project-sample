@@ -16,8 +16,8 @@ namespace WebApi.Models
         public DateTime? EndDate { get; set; }
         [Required]
         [Key, ForeignKey("FK_User")]
-        public virtual User User { get; set; } = null!;
+        public User User { get; set; } = null!;
         [Key, ForeignKey("FK_Position")]
-        public virtual Position? Position { get; set; }
+        public Position? Position { get; set; }
     }
 }

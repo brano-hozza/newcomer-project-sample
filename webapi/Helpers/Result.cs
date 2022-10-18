@@ -5,7 +5,10 @@ namespace WebApi.Helpers
 {
     public enum ErrorType
     {
-        AuthSettingsValidationFailed
+        AuthSettingsValidationFailed,
+        UserNotFound,
+        PositionNotFound,
+        PositionReferenceExists,
     }
     public class Error
     {

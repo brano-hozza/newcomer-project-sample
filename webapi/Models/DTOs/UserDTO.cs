@@ -1,5 +1,5 @@
 using System;
-namespace WebApi.Models
+namespace WebApi.DTOs
 {
     /**
     * User DTO for easier API manipulation
@@ -15,5 +15,7 @@ namespace WebApi.Models
         public float Salary { get; set; }
         public int Position { get; set; }
         public DateTime? ResignedDate { get; set; }
+
+        public UserDTO() { }
     }
 }

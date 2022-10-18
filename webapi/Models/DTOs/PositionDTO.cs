@@ -1,4 +1,6 @@
-namespace WebApi.Models
+using WebApi.Models;
+
+namespace WebApi.DTOs
 {
     /**
     * Position DTO for easier API manipulation
@@ -7,5 +9,12 @@ namespace WebApi.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = "";
+
+        public PositionDTO() { }
+
+        public PositionDTO(Position position)
+        {
+            this.Name = position.Name;
+        }
     }
 }

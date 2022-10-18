@@ -4,7 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using WebApi.DTOs;
+using WebApi.Helpers;
 using WebApi.Models;
+using WebApi.Services;
 
 namespace WebApi.Controllers
 {
@@ -15,44 +18,42 @@ namespace WebApi.Controllers
     [ApiController]
     public class PositionsController : ControllerBase
     {
-        private readonly DataContext db;
         private readonly ILogger _logger;
+        private readonly IPositionService _positionService;
 
-        public PositionsController(DataContext context, ILogger<PositionsController> logger)
+        public PositionsController(ILogger<PositionsController> logger, IPositionService positionService)
         {
-            db = context;
             this._logger = logger;
+            this._positionService = positionService;
         }
-        // GET: api/positions/5
-        // Return position by ID
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Position>> GetPosition(int id)
-        {
-            var position = await db.Positions.FindAsync(id);
-
-            return position ?? (ActionResult<Position>)NotFound();
-        }
-        
 
         // GET: api/positions
         // Return all positions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
         {
-            return await db.Positions.ToListAsync();
+            var result = await _positionService.GetAll();
+            if (result.IsFailed)
+            {
+                return BadRequest(result);
+            }
+            return result.Value;
         }
 
         // POST: api/positions
         // Create new position
         [HttpPost]
-        public async Task<ActionResult<Position>> PostPosition(Position position)
+        public async Task<ActionResult<Position>> PostPosition(PositionDTO position)
         {
-            db.Positions.Add(position);
-            await db.SaveChangesAsync();
-
+            _logger.LogInformation("Creating new position", position.Name);
+            var result = await _positionService.Create(position);
+            if (result.IsFailed)
+            {
+                return BadRequest(result);
+            }
             _logger.LogInformation("Created new position {Name}", position.Name);
 
-            return CreatedAtAction("GetPosition", new { id = position.Id }, position);
+            return result.Value;
         }
 
         // DELETE: api/positions/5
@@ -60,22 +61,20 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePosition(int id)
         {
-            var position = await db.Positions.FindAsync(id);
-            if (position == null)
+            var result = await _positionService.Delete(id);
+            if (result.IsFailed)
             {
-                return NotFound();
+                if (result.Errors.Find(e => e.Type == ErrorType.PositionNotFound) != null)
+                {
+                    return NotFound(result);
+                }
+                else if (result.Errors.Find(e => e.Type == ErrorType.PositionReferenceExists) != null)
+                {
+                    _logger.LogError("Unsucesful try to delete position with existing references, ID:{Id}", id);
+                    return Conflict();
+                }
+                return BadRequest(result);
             }
-            try // Handle reference error
-            {
-                db.Positions.Remove(position);
-                await db.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                _logger.LogError("Unsucesful try to delete position with existing references, ID:{Id}", id);
-                return Conflict();
-            }
-
             return NoContent();
         }
     }
