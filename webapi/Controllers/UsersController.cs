@@ -116,10 +116,8 @@ namespace WebApi.Controllers
             }
             // Update user info
             _db.Entry(user).State = EntityState.Modified;
-            user.Name = dto.Name;
-            user.Surname = dto.Surname;
-            user.BirthDate = dto.BirthDate;
             user.Position = position;
+            user.Address = dto.Address;
             user.Salary = dto.Salary;
 
             try
