@@ -199,6 +199,13 @@ namespace WebApi.Controllers
             }
             if (soft)
             {
+
+                var change = await _db.PositionChanges.Where(pc => pc.User.Id == id).OrderByDescending(pc => pc.StartDate).FirstOrDefaultAsync();
+                if (change == null)
+                {
+                    return BadRequest();
+                }
+                change.EndDate = DateTime.Now;
                 user.ResignedDate = DateTime.Now;
                 _db.Entry(user).State = EntityState.Modified;
             }
