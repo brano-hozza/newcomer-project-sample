@@ -153,13 +153,13 @@ export default defineComponent({
 				<label
 					for="name"
 					class="block mb-2 text-lg font-medium text-gray-900">
-					*Meno:
+					<span v-if="creation">*</span>Meno:
 				</label>
 				<input
 					id="name"
 					v-model="name"
-					:disabled="!creation && !editing"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+					:disabled="!creation"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
 					placeholder="Meno zamestnanca..." />
 					 <p v-if="name.length < 3" class="text-red-500">Meno musí mať aspoň 3 znaky</p>
 			</div>
@@ -167,13 +167,13 @@ export default defineComponent({
 				<label
 					for="surname"
 					class="block mb-2 text-lg font-medium text-gray-900">
-					*Priezvisko:
+					<span v-if="creation">*</span>Priezvisko:
 				</label>
 				<input
 					id="surname"
 					v-model="surname"
-					:disabled="!creation && !editing"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+					:disabled="!creation"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
 					placeholder="Priezvisko zamestnanca..." />
 					 <p v-if="surname.length < 3" class="text-red-500">Priezvisko musí mať aspoň 3 znaky</p>
 			</div>
@@ -187,26 +187,26 @@ export default defineComponent({
 					id="address"
 					v-model="address"
 					:disabled="!creation && !editing"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
 					placeholder="Adresa zamestnanca..." />
 			</div>
 			<div class="w-full my-2">
 				<label
 					for="birthDate"
 					class="block mb-2 text-lg font-medium text-gray-900">
-					*Dátum narodenia:
+					<span v-if="creation">*</span>Dátum narodenia:
 				</label>
 				<CalendarComponent
 					id="birthDate"
 					v-model="birthDate"
-					:disabled="!creation && !editing"
+					:disabled="!creation"
 					:checks="[(val:string) => (new Date(val).getTime() > Date.now()) && 'Neplatny datum']" />
 			</div>
 			<div class="w-full my-2">
 				<label
 					for="startDate"
 					class="block mb-2 text-lg font-medium text-gray-900">
-					*Dátum nástupu:
+					<span v-if="creation">*</span>Dátum nástupu:
 				</label>
 
 				<CalendarComponent
@@ -218,12 +218,12 @@ export default defineComponent({
 				<label
 					for="position"
 					class="block mb-2 text-lg font-medium text-gray-900">
-					*Pozícia:
+					<span v-if="creation || editing">*</span>Pozícia:
 				</label>
 				<select
 					id="position"
 					:disabled="!creation && !editing"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  disabled:text-gray-400"
 					@change="changePosition">
 					<option value="-1" disabled :selected="position == -1">
 						Zvoľte pozíciu
@@ -244,7 +244,7 @@ export default defineComponent({
 				<label
 					for="salary"
 					class="block mb-2 text-lg font-medium text-gray-900">
-					*Plat:
+					<span v-if="creation || editing">*</span>Plat:
 				</label>
 				<input
 					id="salary"
@@ -252,12 +252,12 @@ export default defineComponent({
 					:disabled="!creation && !editing"
 					type="number"
 					min="0"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
 					placeholder="Plat zamestnanca..." />
 					
 					<p v-if="salary < 1" class="text-red-500">Je potrebné zadať plat</p>
 			</div>
-			<i class="text-gray-300">Povinné údaje sú označené hviezdičkou</i>
+			<i v-if="creation || editing" class="text-gray-300">Povinné údaje sú označené hviezdičkou</i>
 			<button
 				v-if="creation || editing"
 				:disabled="!canSave"

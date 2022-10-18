@@ -45,7 +45,7 @@ export default defineComponent({
 		<input
 			id="birthDate"
 			v-model="date"
-			class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-2.5"
+			class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-2.5 disabled:text-gray-400"
 			:class="{ 'border-red-300': errors.length > 0 }"
 			:disabled="disabled"
 			type="date" />
