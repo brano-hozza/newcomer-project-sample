@@ -2,6 +2,7 @@
 import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
+import ErrorComponent from '@/components/ErrorComponent.vue';
 import PositionRow from '@/components/PositionRow.vue';
 import { usePositionsStore } from '@/store/positions';
 import { IPosition } from '@/types/position';
@@ -13,7 +14,7 @@ type State = {
 };
 export default defineComponent({
 	name: 'PositionsView',
-	components: { PositionRow },
+	components: { PositionRow, ErrorComponent },
 	data: (): State => ({
 		showDelete: false,
 		showNewPosition: false,
@@ -184,16 +185,12 @@ export default defineComponent({
 				</span>
 			</div>
 		</div>
-		<div
+		<ErrorComponent
 			v-if="referenceExists"
-			class="fixed right-0 bottom-0 bg-gray-100 w-80 h-44 flex justify-evenly flex-col p-4 border-red-400 border-solid border-2">
-			<h3 class="m-2 text-xl font-bold">Vymazanie zaznamu zlyhalo</h3>
-			<p class="m-4">
-				Nie je mozne vymazat poziciu
-				<b>{{ selectedPosition?.name }}</b>
-				, pretoze je priradena k nejakej osobe.
-			</p>
-		</div>
+			:error="{
+				title: 'Vymazanie zaznamu zlyhalo',
+				message: `Nie je mozne vymazat poziciu ${selectedPosition?.name}, pretoze je priradena k nejakej osobe.`
+			}" />
 	</div>
 </template>
 <style lang="scss"></style>

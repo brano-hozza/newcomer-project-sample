@@ -7,6 +7,8 @@ type TUserState = {
 	users: IUser[];
 	userDetails: IUser | null;
 	loading: boolean;
+	userExists: string | null;
+	networkError: boolean;
 	history: {
 		id: number;
 		positionId: number;
@@ -21,9 +23,20 @@ export const useUsersStore = defineStore('users', {
 		users: [],
 		userDetails: null,
 		loading: false,
-		history: []
+		history: [],
+		userExists: null,
+		networkError: false
 	}),
 	actions: {
+		/**
+		 * Function to display network error
+		 */
+		setNetworkError() {
+			this.networkError = true;
+			setTimeout(() => {
+				this.networkError = false;
+			}, 4000);
+		},
 		/**
 		 * Action to fetch users from the API
 		 */
@@ -33,6 +46,7 @@ export const useUsersStore = defineStore('users', {
 				const response = await apiCall('/api/users');
 				this.users = await response.json();
 			} catch (e) {
+				this.setNetworkError();
 				this.users = [];
 			}
 			this.loading = false;
@@ -46,6 +60,7 @@ export const useUsersStore = defineStore('users', {
 				const response = await apiCall('/api/users/old');
 				this.users = await response.json();
 			} catch (e) {
+				this.setNetworkError();
 				this.users = [];
 			}
 			this.loading = false;
@@ -60,6 +75,7 @@ export const useUsersStore = defineStore('users', {
 				const response = await apiCall(`/api/users/${id}`);
 				this.userDetails = await response.json();
 			} catch (e) {
+				this.setNetworkError();
 				this.userDetails = null;
 			}
 			this.loading = false;
@@ -74,6 +90,7 @@ export const useUsersStore = defineStore('users', {
 				const response = await apiCall(`/api/users/${id}/history`);
 				this.history = await response.json();
 			} catch (e) {
+				this.setNetworkError();
 				this.history = [];
 			}
 			this.loading = false;
@@ -90,8 +107,7 @@ export const useUsersStore = defineStore('users', {
 				});
 				this.users = this.users.filter(user => user.id !== id);
 			} catch (e) {
-				//eslint-disable-next-line no-console
-				console.log(e);
+				this.setNetworkError();
 			}
 			this.loading = false;
 		},
@@ -109,11 +125,18 @@ export const useUsersStore = defineStore('users', {
 					},
 					body: JSON.stringify(user)
 				});
+				
+				if (resp.status === 403) {
+					this.userExists = 'Používateľ s týmto menom už existuje';
+					setTimeout(() => {
+						this.userExists = null;
+					}, 4000);
+					throw new Error('User already exists');
+				}
 				const newUser = (await resp.json()) as IUser;
 				this.users = [...this.users, newUser];
 			} catch (e) {
-				//eslint-disable-next-line no-console
-				console.log(e);
+				this.setNetworkError();
 			}
 			this.loading = false;
 		},
@@ -124,18 +147,26 @@ export const useUsersStore = defineStore('users', {
 		async updateUser(user: IUser) {
 			this.loading = true;
 			try {
-				await apiCall(`/api/users/${user.id}`, {
+				const resp = await apiCall(`/api/users/${user.id}`, {
 					method: 'PUT',
 					headers: {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify(user)
 				});
+				
+				if (resp.status === 403) {
+					this.userExists = 'Používateľ s týmto menom už existuje';
+					setTimeout(() => {
+						this.userExists = null;
+					}, 4000);
+					throw new Error('User already exists');
+				}
 				this.users = this.users.map(u => (u.id === user.id ? user : u));
 			} catch (e) {
-				//eslint-disable-next-line no-console
-				console.log(e);
+				this.setNetworkError();
 			}
+			this.loading = false;
 		}
 	}
 });

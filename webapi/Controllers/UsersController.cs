@@ -87,6 +87,12 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
+            var _u = await _db.Users.Select(u => u).Where(u => u.Id != dto.Id && u.Name == dto.Name && u.Surname == dto.Surname).FirstOrDefaultAsync();
+            if (_u != null)
+            {
+                return Problem("User already exists.", "User", 403);
+            }
+
             // Check if position changed
             if (user.Position.Id != dto.Position)
             {
@@ -140,6 +146,11 @@ namespace WebApi.Controllers
             if (position == null)
             {
                 return Problem("Position not found.");
+            }
+            var _u = await _db.Users.Select(u => u).Where(u => u.Name == dto.Name && u.Surname == dto.Surname).FirstOrDefaultAsync();
+            if (_u != null)
+            {
+                return Problem("User already exists.", "User", 403);
             }
             User user = new()
             {

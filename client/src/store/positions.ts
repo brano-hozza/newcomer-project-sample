@@ -7,15 +7,26 @@ type TPositionState = {
 	positions: IPosition[];
 	loading: boolean;
 	referenceExists: boolean;
+	networkError: boolean;
 };
 
 export const usePositionsStore = defineStore('positions', {
 	state: (): TPositionState => ({
 		positions: [],
 		loading: false,
-		referenceExists: false
+		referenceExists: false,
+		networkError: false
 	}),
 	actions: {
+		/**
+		 * Function to display network error
+		 */
+		setNetworkError() {
+			this.networkError = true;
+			setTimeout(() => {
+				this.networkError = false;
+			}, 4000);
+		},
 		/**
 		 * Action to fetch positions from the API
 		 */
@@ -25,6 +36,7 @@ export const usePositionsStore = defineStore('positions', {
 				const response = await apiCall('/api/positions');
 				this.positions = await response.json();
 			} catch (e) {
+				this.setNetworkError();
 				this.positions = [];
 			}
 			this.loading = false;
@@ -50,8 +62,7 @@ export const usePositionsStore = defineStore('positions', {
 					}, 3000);
 				}
 			} catch (e) {
-				// eslint-disable-next-line no-console
-				console.log(e);
+				this.setNetworkError();
 			}
 			this.loading = false;
 		},
@@ -74,8 +85,7 @@ export const usePositionsStore = defineStore('positions', {
 				const position = await resp.json();
 				this.positions.push(position);
 			} catch (e) {
-				// eslint-disable-next-line no-console
-				console.log(e);
+				this.setNetworkError();
 			}
 			this.loading = false;
 		}

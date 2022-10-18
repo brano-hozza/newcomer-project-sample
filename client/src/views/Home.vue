@@ -1,13 +1,27 @@
 <script lang="ts">
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 import { RouteRecordNormalized } from 'vue-router';
 
+import ErrorComponent from '@/components/ErrorComponent.vue';
+import { usePositionsStore } from '@/store/positions';
+import { useUsersStore } from '@/store/users';
+
 export default defineComponent({
 	name: 'HomeView',
+	components: { ErrorComponent },
 	data: () => ({
 		routes: [] as RouteRecordNormalized[]
 	}),
-	computed: {},
+	computed: {
+		...mapState(usePositionsStore, {
+			networkErrorPos: store => store.networkError
+		}),
+		...mapState(useUsersStore, {
+			userExists: state => state.userExists,
+			networkErrorUser: store => store.networkError
+		})
+	},
 	mounted() {
 		// Map navigation routes to local state property
 		this.routes = this.$router.getRoutes().filter(route => route.meta?.nav);
@@ -42,6 +56,19 @@ export default defineComponent({
 		</header>
 		<main>
 			<router-view />
+			<ErrorComponent
+				v-if="networkErrorPos || networkErrorUser"
+				:error="{
+					title: 'API Problém',
+					message:
+						'Nepodarilo sa spojiť s API, kontaktujte administrátora.'
+				}" />
+			<ErrorComponent
+				v-if="userExists"
+				:error="{
+					title: 'Vytvorenie používateľa',
+					message: userExists
+				}" />
 		</main>
 	</div>
 </template>
