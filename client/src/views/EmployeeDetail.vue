@@ -161,30 +161,20 @@ export default defineComponent({
 				placeholder="Adresa zamestnance..."
 				:disabled="!creation && !editing" />
 
-			<div class="w-full my-2">
-				<label
-					for="birthDate"
-					class="block mb-2 text-lg font-medium text-gray-900">
-					<span v-if="creation">*</span>Dátum narodenia:
-				</label>
-				<CalendarComponent
-					id="birthDate"
-					v-model="birthDate"
-					:disabled="!creation"
-					:checks="[(val:string) => (new Date(val).getTime() > Date.now()) && 'Neplatny datum']" />
-			</div>
-			<div class="w-full my-2">
-				<label
-					for="startDate"
-					class="block mb-2 text-lg font-medium text-gray-900">
-					<span v-if="creation">*</span>Dátum nástupu:
-				</label>
+			<CalendarComponent
+				id="birthDate"
+				v-model="birthDate"
+				label="Dátum narodenia"
+				:required="creation"
+				:disabled="!creation"
+				:checks="[(val:string) => (new Date(val).getTime() > Date.now()) && 'Neplatny datum']" />
 
-				<CalendarComponent
-					id="startDate"
-					v-model="startDate"
-					:disabled="!creation" />
-			</div>
+			<CalendarComponent
+				id="startDate"
+				v-model="startDate"
+				label="Dátum nástupu"
+				:required="creation"
+				:disabled="!creation" />
 			<div class="w-full my-2">
 				<label
 					for="position"
@@ -211,25 +201,18 @@ export default defineComponent({
 
 				<p v-if="position < 0" class="text-red-500">Vyberte pozíciu</p>
 			</div>
-			<div class="w-full my-2">
-				<label
-					for="salary"
-					class="block mb-2 text-lg font-medium text-gray-900">
-					<span v-if="creation || editing">*</span>Plat:
-				</label>
-				<input
-					id="salary"
-					v-model="salary"
-					:disabled="!creation && !editing"
-					type="number"
-					min="0"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
-					placeholder="Plat zamestnanca..." />
-
-				<p v-if="salary < 1" class="text-red-500">
-					Je potrebné zadať plat
-				</p>
-			</div>
+			<FormInput
+				id="salary"
+				v-model="salary"
+				label="Plat"
+				placeholder="Plat zamestnance..."
+				type="number"
+				:required="creation || editing"
+				:disabled="!creation && !editing"
+				:error="{
+					message: 'Je potrebné zadať plat',
+					check: val => val < 1
+				}" />
 			<i v-if="creation || editing" class="text-gray-300">
 				Povinné údaje sú označené hviezdičkou
 			</i>

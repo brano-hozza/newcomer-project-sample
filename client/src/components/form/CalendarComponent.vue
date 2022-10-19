@@ -16,6 +16,13 @@ export default defineComponent({
 		},
 		disabled: {
 			type: Boolean
+		},
+		required: {
+			type: Boolean
+		},
+		label: {
+			type: String,
+			default: null
 		}
 	},
 	data: () => ({
@@ -41,7 +48,12 @@ export default defineComponent({
 });
 </script>
 <template>
-	<span>
+	<div class="w-full my-2">
+		<label
+			for="startDate"
+			class="block mb-2 text-lg font-medium text-gray-900">
+			<span v-if="required">*</span>{{ label }}:
+		</label>
 		<input
 			id="birthDate"
 			v-model="date"
@@ -50,5 +62,5 @@ export default defineComponent({
 			:disabled="disabled"
 			type="date" />
 		<p v-if="errors.length > 0" class="text-red-500">{{ errors }}</p>
-	</span>
+	</div>
 </template>

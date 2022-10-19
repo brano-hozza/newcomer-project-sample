@@ -90,7 +90,7 @@ export default defineComponent({
 				</tr>
 			</thead>
 			<tbody v-if="!loading">
-				<user-row
+				<UserRow
 					v-for="user in users"
 					:key="user.id"
 					:user="user"
@@ -98,7 +98,7 @@ export default defineComponent({
 					@delete="promptDelete" />
 			</tbody>
 			<tbody v-else>
-				<user-row v-for="_ in [1, 2, 3, 4, 5]" :key="_" placeholder />
+				<UserRow v-for="_ in [1, 2, 3, 4, 5]" :key="_" placeholder />
 			</tbody>
 		</table>
 		<h2 v-else class="text-center text-4xl">

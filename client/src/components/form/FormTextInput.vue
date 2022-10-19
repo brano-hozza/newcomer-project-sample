@@ -9,7 +9,7 @@ export default defineComponent({
 			default: null
 		},
 		modelValue: {
-			type: String,
+			type: [String, Number],
 			default: ''
 		},
 		required: {
@@ -31,8 +31,16 @@ export default defineComponent({
 		error: {
 			type: Object as () => {
 				message: string;
-				check: (val: string) => boolean;
+				check: (val: string | number) => boolean;
 			},
+			default: null
+		},
+		type: {
+			type: String as () => 'text' | 'number',
+			default: 'text'
+		},
+		min: {
+			type: Number,
 			default: null
 		}
 	},
@@ -61,6 +69,8 @@ export default defineComponent({
 			:id="id"
 			v-model="value"
 			:disabled="disabled"
+			:type="type"
+			:min="min"
 			class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
 			:placeholder="placeholder" />
 		<p v-if="error?.check(value)" class="text-red-500">
