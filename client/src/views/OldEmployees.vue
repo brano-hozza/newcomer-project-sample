@@ -2,7 +2,7 @@
 import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
-import UserRow from '@/components/UserRow.vue';
+import UserRow from '@/components/table/UserRow.vue';
 import { usePositionsStore } from '@/store/positions';
 import { useUsersStore } from '@/store/users';
 type State = {

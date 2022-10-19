@@ -2,7 +2,8 @@
 import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
-import CalendarComponent from '@/components/CalendarComponent.vue';
+import CalendarComponent from '@/components/form/CalendarComponent.vue';
+import FormInput from '@/components/form/FormTextInput.vue';
 import { usePositionsStore } from '@/store/positions';
 import { useUsersStore } from '@/store/users';
 import { IUser } from '@/types';
@@ -19,7 +20,7 @@ type State = {
 };
 export default defineComponent({
 	name: 'EmployeeDetail',
-	components: { CalendarComponent },
+	components: { CalendarComponent, FormInput },
 	data: (): State => ({
 		editing: false,
 		creation: false,
@@ -149,47 +150,31 @@ export default defineComponent({
 				</table>
 			</div>
 
-			<div class="w-full my-2">
-				<label
-					for="name"
-					class="block mb-2 text-lg font-medium text-gray-900">
-					<span v-if="creation">*</span>Meno:
-				</label>
-				<input
-					id="name"
-					v-model="name"
-					:disabled="!creation"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
-					placeholder="Meno zamestnanca..." />
-					 <p v-if="name.length < 3" class="text-red-500">Meno musí mať aspoň 3 znaky</p>
-			</div>
-			<div class="w-full my-2">
-				<label
-					for="surname"
-					class="block mb-2 text-lg font-medium text-gray-900">
-					<span v-if="creation">*</span>Priezvisko:
-				</label>
-				<input
-					id="surname"
-					v-model="surname"
-					:disabled="!creation"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
-					placeholder="Priezvisko zamestnanca..." />
-					 <p v-if="surname.length < 3" class="text-red-500">Priezvisko musí mať aspoň 3 znaky</p>
-			</div>
-			<div class="w-full my-2">
-				<label
-					for="address"
-					class="block mb-2 text-lg font-medium text-gray-900">
-					Adresa:
-				</label>
-				<input
-					id="address"
-					v-model="address"
-					:disabled="!creation && !editing"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
-					placeholder="Adresa zamestnanca..." />
-			</div>
+			<FormInput
+			id="name"
+			v-model="name"
+			label="Meno"
+			placeholder="Meno zamestnance..."
+			:disabled="!creation"
+			:required="creation"
+			:error="{message: 'Meno musí mať aspoň 4 znaky', check: (val) => val.length < 4}"/>
+
+			<FormInput
+			id="surname"
+			v-model="surname"
+			label="Priezvisko"
+			placeholder="Priezvisko zamestnance..."
+			:disabled="!creation"
+			:required="creation"
+			:error="{message: 'Priezvisko musí mať aspoň 4 znaky', check: (val) => val.length < 4}"/>
+
+			<FormInput
+			id="address"
+			v-model="address"
+			label="Adresa"
+			placeholder="Adresa zamestnance..."
+			:disabled="!creation && !editing"/>
+			
 			<div class="w-full my-2">
 				<label
 					for="birthDate"
