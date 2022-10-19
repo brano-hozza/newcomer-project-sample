@@ -3,7 +3,7 @@ import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
 import ButtonComponent from '@/components/ButtonComponent.vue';
-import PositionModal from '@/components/PositionModal.vue';
+import PositionModal from '@/components/modals/PositionModal.vue';
 import PositionRow from '@/components/table/PositionRow.vue';
 import { usePositionsStore } from '@/store/positions';
 import { IPosition } from '@/types';

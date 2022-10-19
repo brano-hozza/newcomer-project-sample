@@ -3,12 +3,13 @@ import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 import { RouteRecordNormalized } from 'vue-router';
 
+import Navigation from '@/components/layout/Navigation.vue';
 import Notification from '@/components/NotificationComponent.vue';
 import { useNotificationStore } from '@/store/notification';
 
 export default defineComponent({
 	name: 'HomeView',
-	components: { Notification },
+	components: { Notification, Navigation },
 	data: () => ({
 		routes: [] as RouteRecordNormalized[]
 	}),
@@ -18,15 +19,6 @@ export default defineComponent({
 	mounted() {
 		// Map navigation routes to local state property
 		this.routes = this.$router.getRoutes().filter(route => route.meta?.nav);
-	},
-	methods: {
-		/**
-		 * Method to check if a route is active
-		 * @param path - The path to the route
-		 */
-		isActiveRoute(path: string) {
-			return this.$route.path === path;
-		}
 	}
 });
 </script>
@@ -35,16 +27,7 @@ export default defineComponent({
 		<header class="border-b-4 border-solid py-2 mb-2">
 			<nav class="flex">
 				<b class="text-xl mx-4 my-1">EmploYer</b>
-				<ul class="flex list-none">
-					<li
-						v-for="route in routes"
-						:key="route.path"
-						class="mx-2 border-2 border-neutral-600 px-2 cursor-pointer"
-						:class="{ 'border-red-500': isActiveRoute(route.path) }"
-						@click="$router.push(route.path)">
-						{{ route.name }}
-					</li>
-				</ul>
+				<Navigation :routes="routes" />
 			</nav>
 		</header>
 		<main>

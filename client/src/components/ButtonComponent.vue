@@ -38,8 +38,7 @@ export default defineComponent({
 			'bg-yellow-500 hover:bg-yellow-700 text-black': type === 'danger',
 			'flex-1': type !== 'reload',
 			'w-10': type === 'reload'
-		}"
-		@click="$emit('click')">
+		}">
 		<template v-if="type !== 'reload'">
 			{{ text }}
 		</template>

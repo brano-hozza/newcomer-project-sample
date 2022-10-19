@@ -7,7 +7,7 @@ import UserRow from '@/components/table/UserRow.vue';
 import { usePositionsStore } from '@/store/positions';
 import { useUsersStore } from '@/store/users';
 
-import UserModal from '../components/UserModal.vue';
+import UserModal from '../components/modals/UserModal.vue';
 type State = {
 	selectedUser?: {
 		id: number;

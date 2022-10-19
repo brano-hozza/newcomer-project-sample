@@ -2,8 +2,10 @@
 import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
+import ButtonComponent from '@/components/ButtonComponent.vue';
 import CalendarComponent from '@/components/form/CalendarComponent.vue';
 import FormInput from '@/components/form/FormTextInput.vue';
+import HistoryComponent from '@/components/HistoryComponent.vue';
 import { usePositionsStore } from '@/store/positions';
 import { useUsersStore } from '@/store/users';
 import { IUser } from '@/types';
@@ -20,7 +22,12 @@ type State = {
 };
 export default defineComponent({
 	name: 'EmployeeDetail',
-	components: { CalendarComponent, FormInput },
+	components: {
+		CalendarComponent,
+		FormInput,
+		HistoryComponent,
+		ButtonComponent
+	},
 	data: (): State => ({
 		editing: false,
 		creation: false,
@@ -121,60 +128,39 @@ export default defineComponent({
 				}}
 				zamestnanca
 			</h1>
-			<div v-if="!creation">
-				<h1 class="text-xl m-2 font-semibold">Historia</h1>
-				<table>
-					<thead>
-						<tr>
-							<th class="border px-4 py-2">Pozicia</th>
-							<th class="border px-4 py-2">Od</th>
-							<th class="border px-4 py-2">Do</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-for="item in history" :key="item.id">
-							<td class="border px-4 py-2">
-								{{
-									positions.find(p => p.id == item.positionId)
-										?.name ?? '<zmazané>'
-								}}
-							</td>
-							<td class="border px-4 py-2">
-								{{ item.startDate?.slice(0, 10) }}
-							</td>
-							<td class="border px-4 py-2">
-								{{ item.endDate?.slice(0, 10) }}
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+			<HistoryComponent />
 
 			<FormInput
-			id="name"
-			v-model="name"
-			label="Meno"
-			placeholder="Meno zamestnance..."
-			:disabled="!creation"
-			:required="creation"
-			:error="{message: 'Meno musí mať aspoň 4 znaky', check: (val) => val.length < 4}"/>
+				id="name"
+				v-model="name"
+				label="Meno"
+				placeholder="Meno zamestnance..."
+				:disabled="!creation"
+				:required="creation"
+				:error="{
+					message: 'Meno musí mať aspoň 4 znaky',
+					check: val => val.length < 4
+				}" />
 
 			<FormInput
-			id="surname"
-			v-model="surname"
-			label="Priezvisko"
-			placeholder="Priezvisko zamestnance..."
-			:disabled="!creation"
-			:required="creation"
-			:error="{message: 'Priezvisko musí mať aspoň 4 znaky', check: (val) => val.length < 4}"/>
+				id="surname"
+				v-model="surname"
+				label="Priezvisko"
+				placeholder="Priezvisko zamestnance..."
+				:disabled="!creation"
+				:required="creation"
+				:error="{
+					message: 'Priezvisko musí mať aspoň 4 znaky',
+					check: val => val.length < 4
+				}" />
 
 			<FormInput
-			id="address"
-			v-model="address"
-			label="Adresa"
-			placeholder="Adresa zamestnance..."
-			:disabled="!creation && !editing"/>
-			
+				id="address"
+				v-model="address"
+				label="Adresa"
+				placeholder="Adresa zamestnance..."
+				:disabled="!creation && !editing" />
+
 			<div class="w-full my-2">
 				<label
 					for="birthDate"
@@ -208,7 +194,7 @@ export default defineComponent({
 				<select
 					id="position"
 					:disabled="!creation && !editing"
-					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  disabled:text-gray-400"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
 					@change="changePosition">
 					<option value="-1" disabled :selected="position == -1">
 						Zvoľte pozíciu
@@ -222,8 +208,8 @@ export default defineComponent({
 						{{ _position.name }}
 					</option>
 				</select>
-					
-					<p v-if="position < 0" class="text-red-500">Vyberte pozíciu</p>
+
+				<p v-if="position < 0" class="text-red-500">Vyberte pozíciu</p>
 			</div>
 			<div class="w-full my-2">
 				<label
@@ -239,17 +225,21 @@ export default defineComponent({
 					min="0"
 					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 disabled:text-gray-400"
 					placeholder="Plat zamestnanca..." />
-					
-					<p v-if="salary < 1" class="text-red-500">Je potrebné zadať plat</p>
+
+				<p v-if="salary < 1" class="text-red-500">
+					Je potrebné zadať plat
+				</p>
 			</div>
-			<i v-if="creation || editing" class="text-gray-300">Povinné údaje sú označené hviezdičkou</i>
-			<button
-				v-if="creation || editing"
-				:disabled="!canSave"
-				class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded my-2 w-full disabled:bg-blue-100 disabled:text-blue-300 disabled:hover:cursor-not-allowed"
-				@click="save">
-				Uložiť
-			</button>
+			<i v-if="creation || editing" class="text-gray-300">
+				Povinné údaje sú označené hviezdičkou
+			</i>
+			<span class="w-full flex">
+				<ButtonComponent
+					v-if="creation || editing"
+					type="create"
+					text="Uložiť"
+					@click="save" />
+			</span>
 		</div>
 	</article>
 </template>

@@ -3,8 +3,8 @@ import { mapActions, mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
 import ButtonComponent from '@/components/ButtonComponent.vue';
+import UserModal from '@/components/modals/UserModal.vue';
 import UserRow from '@/components/table/UserRow.vue';
-import UserModal from '@/components/UserModal.vue';
 import { usePositionsStore } from '@/store/positions';
 import { useUsersStore } from '@/store/users';
 type State = {

@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 
 import { IPosition } from '@/types';
 
-import ButtonComponent from './ButtonComponent.vue';
+import ButtonComponent from '../ButtonComponent.vue';
 
 export default defineComponent({
 	name: 'PositionModalComponent',
