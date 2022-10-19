@@ -5,7 +5,7 @@ import { defineComponent } from 'vue';
 import CalendarComponent from '@/components/CalendarComponent.vue';
 import { usePositionsStore } from '@/store/positions';
 import { useUsersStore } from '@/store/users';
-import { IUser } from '@/types/user';
+import { IUser } from '@/types';
 type State = {
 	editing?: boolean;
 	creation?: boolean;

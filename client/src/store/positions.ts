@@ -1,32 +1,23 @@
 import { defineStore } from 'pinia';
 
 import { apiCall } from '@/helpers/api';
-import { IPosition } from '@/types/position';
+import { IPosition } from '@/types';
+
+import { useNotificationStore } from './notification';
 
 type TPositionState = {
 	positions: IPosition[];
 	loading: boolean;
-	referenceExists: boolean;
-	networkError: boolean;
 };
+
+const notificationStore = useNotificationStore();
 
 export const usePositionsStore = defineStore('positions', {
 	state: (): TPositionState => ({
 		positions: [],
-		loading: false,
-		referenceExists: false,
-		networkError: false
+		loading: false
 	}),
 	actions: {
-		/**
-		 * Function to display network error
-		 */
-		setNetworkError() {
-			this.networkError = true;
-			setTimeout(() => {
-				this.networkError = false;
-			}, 4000);
-		},
 		/**
 		 * Action to fetch positions from the API
 		 */
@@ -36,7 +27,7 @@ export const usePositionsStore = defineStore('positions', {
 				const response = await apiCall('/api/positions');
 				this.positions = await response.json();
 			} catch (e) {
-				this.setNetworkError();
+				notificationStore.addNotification('Problem API' , 'error', 'Neviem sa pripojiť na server');
 				this.positions = [];
 			}
 			this.loading = false;
@@ -55,16 +46,18 @@ export const usePositionsStore = defineStore('positions', {
 					this.positions = this.positions.filter(
 						position => position.id !== id
 					);
-				} else if (resp.status === 409) {
-					this.referenceExists = true;
-					setTimeout(() => {
-						this.referenceExists = false;
-					}, 3000);
+				} else if (resp.status === 400) {
+					notificationStore.addNotification('Nemozem vymazat' , 'error', 'Tato pozicia sa aktualne pouziva');
+					this.loading = false;
+					return;
 				}
 			} catch (e) {
-				this.setNetworkError();
+				notificationStore.addNotification('Problem API' , 'error', 'Neviem sa pripojiť na server');
+				this.loading = false;
+				return;
 			}
 			this.loading = false;
+			notificationStore.addNotification('Pozicia vymazana' , 'success');
 		},
 		/**
 		 * Action to create a new position
@@ -85,9 +78,12 @@ export const usePositionsStore = defineStore('positions', {
 				const position = await resp.json();
 				this.positions.push(position);
 			} catch (e) {
-				this.setNetworkError();
+				notificationStore.addNotification('Problem API' , 'error', 'Neviem sa pripojiť na server');
+				this.loading = false;
+				return;
 			}
 			this.loading = false;
+			notificationStore.addNotification('Pozicia vytvorena' , 'success');
 		}
 	}
 });

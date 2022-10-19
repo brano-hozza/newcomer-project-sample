@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia';
 
 import { apiCall } from '@/helpers/api';
-import type { IUser } from '@/types/user';
+import type { IUser } from '@/types';
+
+import { useNotificationStore } from './notification';
 
 type TUserState = {
 	users: IUser[];
 	userDetails: IUser | null;
 	loading: boolean;
-	userExists: string | null;
-	networkError: boolean;
 	history: {
 		id: number;
 		positionId: number;
@@ -18,25 +18,15 @@ type TUserState = {
 	}[];
 };
 
+const notificationStore = useNotificationStore();
 export const useUsersStore = defineStore('users', {
 	state: (): TUserState => ({
 		users: [],
 		userDetails: null,
 		loading: false,
-		history: [],
-		userExists: null,
-		networkError: false
+		history: []
 	}),
 	actions: {
-		/**
-		 * Function to display network error
-		 */
-		setNetworkError() {
-			this.networkError = true;
-			setTimeout(() => {
-				this.networkError = false;
-			}, 4000);
-		},
 		/**
 		 * Action to fetch users from the API
 		 */
@@ -46,7 +36,7 @@ export const useUsersStore = defineStore('users', {
 				const response = await apiCall('/api/users');
 				this.users = await response.json();
 			} catch (e) {
-				this.setNetworkError();
+				notificationStore.addNotification('Problem API' , 'error', 'Neviem sa pripojiť na server');
 				this.users = [];
 			}
 			this.loading = false;
@@ -60,7 +50,7 @@ export const useUsersStore = defineStore('users', {
 				const response = await apiCall('/api/users/old');
 				this.users = await response.json();
 			} catch (e) {
-				this.setNetworkError();
+				notificationStore.addNotification('Problem API' , 'error', 'Neviem sa pripojiť na server');
 				this.users = [];
 			}
 			this.loading = false;
@@ -75,7 +65,7 @@ export const useUsersStore = defineStore('users', {
 				const response = await apiCall(`/api/users/${id}`);
 				this.userDetails = await response.json();
 			} catch (e) {
-				this.setNetworkError();
+				notificationStore.addNotification('Problem API' , 'error', 'Neviem sa pripojiť na server');
 				this.userDetails = null;
 			}
 			this.loading = false;
@@ -90,7 +80,7 @@ export const useUsersStore = defineStore('users', {
 				const response = await apiCall(`/api/users/${id}/history`);
 				this.history = await response.json();
 			} catch (e) {
-				this.setNetworkError();
+				notificationStore.addNotification('Problem API' , 'error', 'Neviem sa pripojiť na server');
 				this.history = [];
 			}
 			this.loading = false;
@@ -107,8 +97,11 @@ export const useUsersStore = defineStore('users', {
 				});
 				this.users = this.users.filter(user => user.id !== id);
 			} catch (e) {
-				this.setNetworkError();
+				notificationStore.addNotification('Problem API' , 'error', 'Neviem sa pripojiť na server');
+				this.loading = false;
+				return;
 			}
+			notificationStore.addNotification(`Zamestnanec uspesne ${soft ? 'archivovany' : 'vymazany'}` , 'success');
 			this.loading = false;
 		},
 		/**
@@ -127,18 +120,20 @@ export const useUsersStore = defineStore('users', {
 				});
 				
 				if (resp.status === 409) {
-					this.userExists = 'Používateľ s týmto menom už existuje';
-					setTimeout(() => {
-						this.userExists = null;
-					}, 4000);
-					throw new Error('User already exists');
+					notificationStore.addNotification('Pouzivatel existuje' , 'error', 'Pouzivatel s tymto menom uz existuje');
+					this.loading = false;
+					return;
 				}
 				const newUser = (await resp.json()) as IUser;
 				this.users = [...this.users, newUser];
 			} catch (e) {
-				this.setNetworkError();
+				notificationStore.addNotification('Problem API' , 'error', 'Neviem sa pripojiť na server');
+				this.loading = false;
+				return;
+
 			}
 			this.loading = false;
+			notificationStore.addNotification('Pouzivatel vytvoreny' , 'success');
 		},
 		/**
 		 * Action to update user
@@ -156,8 +151,11 @@ export const useUsersStore = defineStore('users', {
 				});
 				this.users = this.users.map(u => (u.id === user.id ? user : u));
 			} catch (e) {
-				this.setNetworkError();
+				notificationStore.addNotification('Problem API' , 'error', 'Neviem sa pripojiť na server');
+				this.loading = false;
+				return;
 			}
+			notificationStore.addNotification('Uspesne upraveny' , 'success');
 			this.loading = false;
 		}
 	}

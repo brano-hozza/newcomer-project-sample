@@ -5,7 +5,7 @@ import { defineComponent } from 'vue';
 import ErrorComponent from '@/components/ErrorComponent.vue';
 import PositionRow from '@/components/PositionRow.vue';
 import { usePositionsStore } from '@/store/positions';
-import { IPosition } from '@/types/position';
+import { IPosition } from '@/types';
 type State = {
 	selectedPosition?: IPosition;
 	showDelete: boolean;

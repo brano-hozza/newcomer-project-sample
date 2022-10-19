@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 
-import { IPosition } from '@/types/position';
+import { IPosition } from '@/types';
 
 export default defineComponent({
 	name: 'PositionRow',

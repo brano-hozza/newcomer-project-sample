@@ -3,24 +3,17 @@ import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 import { RouteRecordNormalized } from 'vue-router';
 
-import ErrorComponent from '@/components/ErrorComponent.vue';
-import { usePositionsStore } from '@/store/positions';
-import { useUsersStore } from '@/store/users';
+import Notification from '@/components/Notification.vue';
+import { useNotificationStore } from '@/store/notification';
 
 export default defineComponent({
 	name: 'HomeView',
-	components: { ErrorComponent },
+	components: { Notification },
 	data: () => ({
 		routes: [] as RouteRecordNormalized[]
 	}),
 	computed: {
-		...mapState(usePositionsStore, {
-			networkErrorPos: store => store.networkError
-		}),
-		...mapState(useUsersStore, {
-			userExists: state => state.userExists,
-			networkErrorUser: store => store.networkError
-		})
+		...mapState(useNotificationStore, ['notifications'])
 	},
 	mounted() {
 		// Map navigation routes to local state property
@@ -56,19 +49,12 @@ export default defineComponent({
 		</header>
 		<main>
 			<router-view />
-			<ErrorComponent
-				v-if="networkErrorPos || networkErrorUser"
-				:error="{
-					title: 'API Problém',
-					message:
-						'Nepodarilo sa spojiť s API, kontaktujte administrátora.'
-				}" />
-			<ErrorComponent
-				v-if="userExists"
-				:error="{
-					title: 'Vytvorenie používateľa',
-					message: userExists
-				}" />
+			<div class="fixed right-0 bottom-0 flex flex-col">
+				<Notification
+					v-for="notification in notifications"
+					:key="notification.id"
+					:notification="notification" />
+			</div>
 		</main>
 	</div>
 </template>

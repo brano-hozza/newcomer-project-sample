@@ -3,7 +3,7 @@ import { mapState } from 'pinia';
 import { defineComponent, PropType } from 'vue';
 
 import { usePositionsStore } from '@/store/positions';
-import { IUser } from '@/types/user';
+import { IUser } from '@/types';
 
 type ChangedPositions = {
 	[key: number]: string;
