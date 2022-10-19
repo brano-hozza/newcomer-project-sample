@@ -3,8 +3,11 @@ import { defineComponent } from 'vue';
 
 import { IPosition } from '@/types';
 
+import ButtonComponent from './ButtonComponent.vue';
+
 export default defineComponent({
 	name: 'PositionModalComponent',
+	components: { ButtonComponent },
 	props: {
 		type: {
 			type: String as () => 'create' | 'delete',
@@ -54,26 +57,23 @@ export default defineComponent({
 				<b>{{ position?.name }}</b>
 				?
 			</p>
-			<span class="flex justify-evenly">
-				<button
-					class="bg-gray-500 hover:bg-gray-700 text-white py-1 rounded my-2 w-1/3"
-					@click="$emit('cancel')">
-					Zrusiť
-				</button>
-				<button
-					v-if="type === 'create'"
-					class="bg-blue-500 hover:bg-blue-700 text-white py-1 rounded my-2 w-1/3 disabled:bg-blue-100 disabled:text-blue-300 disabled:hover:cursor-not-allowed"
-					:disabled="!canSave"
-					@click="$emit('save', positionName)">
-					Uložiť
-				</button>
+			<span class="flex justify-evenly gap-2 px-4">
+				<ButtonComponent
+					type="cancel"
+					text="Zrusiť"
+					@click="$emit('cancel')" />
 
-				<button
+				<ButtonComponent
+					v-if="type === 'create'"
+					type="create"
+					text="Uložiť"
+					@click="$emit('save', positionName)" />
+
+				<ButtonComponent
 					v-if="type === 'delete'"
-					class="bg-red-700 hover:bg-red-700 text-white py-1 rounded my-2 w-1/3"
-					@click="$emit('delete')">
-					Potvrdiť
-				</button>
+					type="delete"
+					text="Zmazať"
+					@click="$emit('delete')" />
 			</span>
 		</div>
 	</div>

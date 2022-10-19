@@ -2,6 +2,7 @@
 import { mapState } from 'pinia';
 import { defineComponent, PropType } from 'vue';
 
+import ButtonComponent from '@/components/ButtonComponent.vue';
 import { usePositionsStore } from '@/store/positions';
 import { IUser } from '@/types';
 
@@ -10,6 +11,7 @@ type ChangedPositions = {
 };
 export default defineComponent({
 	name: 'UserRow',
+	components: { ButtonComponent },
 	props: {
 		user: {
 			type: Object as PropType<IUser>,
@@ -71,12 +73,11 @@ export default defineComponent({
 				class="inline-block col-11 bg-gradient-to-r from-gray-300 via-gray-100 to-gray-200 w-40 h-5" />
 		</td>
 		<td v-if="!old" class="border px-4 py-2">
-			<button
+			<ButtonComponent
 				v-if="!placeholder"
-				class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded"
-				@click="$emit('edit', user?.id)">
-				Upraviť
-			</button>
+				text="Upraviť"
+				type="create"
+				@click="$emit('edit', user?.id)" />
 
 			<span
 				v-else
@@ -85,14 +86,13 @@ export default defineComponent({
 		<td v-else class="border px-4 py-2" />
 
 		<td class="border px-4 py-2">
-			<button
+			<ButtonComponent
 				v-if="!placeholder"
-				class="bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded"
+				text="Zmazať"
+				type="delete"
 				@click="
 					$emit('delete', user?.id, `${user?.name} ${user?.surname}`)
-				">
-				Zmazať
-			</button>
+				" />
 
 			<span
 				v-else

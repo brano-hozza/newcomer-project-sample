@@ -3,7 +3,7 @@ import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 import { RouteRecordNormalized } from 'vue-router';
 
-import Notification from '@/components/Notification.vue';
+import Notification from '@/components/NotificationComponent.vue';
 import { useNotificationStore } from '@/store/notification';
 
 export default defineComponent({
